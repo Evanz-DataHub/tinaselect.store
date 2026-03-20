@@ -714,7 +714,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 
 <!-- NAV -->
 <!-- Firebase Setup Banner -->
-<div id="firebaseBanner" style="background:#1E1A16;border-bottom:2px solid #C4706A;padding:0;font-family:'Jost',sans-serif;">
+<div id="firebaseBanner" style="background:#1E1A16;border-bottom:2px solid #C4706A;padding:0;font-family:'Jost',sans-serif;display:none">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 5%;">
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
       <div style="background:#C4706A;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:600;color:#fff;letter-spacing:.5px;white-space:nowrap;">🔒 NOT SAVED</div>
@@ -1783,7 +1783,7 @@ function renderProducts(list){
     <div class="pcard">
       <div class="pimg ${p.bg}" style="${(p.photo||p.video)?'':'background:'+(bgMap[p.bg]||bgMap.basic)}" onclick="openLightboxById(${p.id})">
         ${p.video?`<video src="${p.video}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0" muted playsinline loop autoplay></video><div class="play-overlay"></div>`
-          :p.photo?`<img src="${p.photo}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0">`
+          :p.photo&&p.photo.length>10?`<img src="${p.photo}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0" onerror="this.style.display='none'">`
           :`<span>${p.emoji}</span>`}
         <span class="zoom-hint">${p.video?'▶ Tap to view':'🔍 Tap to view'}</span>
         <button class="wish-btn" onclick="event.stopPropagation();toggleWish(this,${p.id})" id="w${p.id}">🤍</button>
@@ -2643,13 +2643,11 @@ function initFirebase(config){
     }
     db = firebase.firestore();
     storage = firebase.storage();
-    // Enable Firestore offline persistence
-    db.enablePersistence({synchronizeTabs:true}).catch(e=>{
-      if(e.code==='failed-precondition') console.warn('Firestore persistence: multiple tabs open');
-      else if(e.code==='unimplemented') console.warn('Firestore persistence not supported in this browser');
-    });
     fbConfigured = true;
     updateDbStatusUI(true);
+    // Hide NOT SAVED banner permanently
+    const b=document.getElementById('firebaseBanner');
+    if(b) b.style.display='none';
     console.log('✅ Firebase connected to tinaselect-store');
     return true;
   } catch(e){
@@ -3090,7 +3088,7 @@ document.addEventListener('DOMContentLoaded',function(){
     logo.addEventListener('click',function(){
       logoTaps++;
       clearTimeout(logoTimer);
-      if(logoTaps>=5){ logoTaps=0; openDashLogin(); }
+      if(logoTaps>=5){ logoTaps=0; openDashLogin(); } // tap logo 5x to open dashboard
       logoTimer=setTimeout(()=>logoTaps=0, 2000);
     });
   }
@@ -3423,12 +3421,19 @@ function bootApp(){
   }
 }
 
-// Run after all scripts have loaded
+// Run immediately, and also on window.load as backup
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded', bootApp);
 } else {
   bootApp();
 }
+// Extra safety: also try on full page load
+window.addEventListener('load', function(){
+  if(!fbConfigured){
+    console.log('Retrying Firebase on window.load...');
+    bootApp();
+  }
+});
 </script>
 </body>
 </html>
