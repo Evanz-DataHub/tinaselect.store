@@ -363,6 +363,24 @@ nav{background:var(--charcoal);padding:0 5%;display:flex;align-items:center;just
 .ibtn.del{color:var(--rose-dk);border-color:var(--rose-dk);background:transparent;}
 .ibtn.del:hover{background:#FEE2E2;}
 .stk{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:2px;margin-bottom:8px;background:#D1FAE5;color:#065F46;}
+.stk-in{background:#D1FAE5;color:#065F46;}
+.stk-out{background:#FEE2E2;color:#991B1B;}
+/* Product card stock badge */
+.pcard-stock{position:absolute;top:10px;left:10px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:3px;letter-spacing:.3px;z-index:2;}
+.ps-in{background:#D1FAE5;color:#065F46;}
+.ps-out{background:#FEE2E2;color:#991B1B;}
+/* Out of stock overlay on card */
+.oos-overlay{position:absolute;inset:0;background:rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;border-radius:8px 8px 0 0;z-index:1;}
+.oos-overlay span{background:#991B1B;color:#fff;font-size:12px;font-weight:600;padding:6px 16px;border-radius:99px;letter-spacing:.5px;}
+/* Stock toggle in dashboard */
+.stock-toggle{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.tog-track{position:relative;width:38px;height:20px;border-radius:10px;transition:background .2s;flex-shrink:0;cursor:pointer;}
+.tog-track.on{background:#34D399;}
+.tog-track.off{background:#F87171;}
+.tog-knob{position:absolute;top:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tog-track.on .tog-knob{left:20px;}
+.tog-track.off .tog-knob{left:2px;}
+.tog-label{font-size:12px;font-weight:500;}
 .aform{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:22px;}
 .aft{font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:20px;}
 .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -404,6 +422,91 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 #colorSwatchGrid .cswatch-opt span{font-size:9px;color:var(--muted);text-align:center;line-height:1.3;max-width:56px;}
 .color-group-label{grid-column:1/-1;font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:6px 0 2px;border-top:1px solid var(--border);margin-top:4px;}
 .color-group-label:first-child{border-top:none;margin-top:0;}
+/* ── ORDER TRACKING PAGE ── */
+.track-hero{background:var(--charcoal);padding:64px 5%;text-align:center;}
+.track-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,46px);color:var(--ivory);margin-bottom:10px;}
+.track-hero p{font-size:14px;color:var(--muted);font-weight:300;max-width:480px;margin:0 auto 28px;}
+.track-search-box{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap;}
+.track-input{flex:1;min-width:200px;border:none;background:rgba(255,255,255,.1);color:var(--ivory);border-radius:6px;padding:14px 18px;font-family:'Jost',sans-serif;font-size:15px;outline:none;letter-spacing:1px;}
+.track-input::placeholder{color:rgba(255,255,255,.35);letter-spacing:0;}
+.track-input:focus{background:rgba(255,255,255,.15);}
+.track-btn{background:var(--rose-dk);color:#fff;border:none;padding:14px 28px;border-radius:6px;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.track-btn:hover{background:var(--rose);}
+.track-body{max-width:680px;margin:0 auto;padding:40px 5% 60px;}
+/* Result card */
+.track-result{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.track-result-hd{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+.track-ref{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--charcoal);}
+.track-date{font-size:12px;color:var(--muted);}
+.track-status-badge{font-size:12px;font-weight:600;padding:5px 14px;border-radius:99px;letter-spacing:.3px;}
+.tsb-pending{background:#FEF3C7;color:#92400E;}
+.tsb-processing{background:#DBEAFE;color:#1E40AF;}
+.tsb-ready{background:#EDE9FE;color:#5B21B6;}
+.tsb-shipped{background:#FEF3C7;color:#92400E;}
+.tsb-delivered{background:#D1FAE5;color:#065F46;}
+.tsb-cancelled{background:#FEE2E2;color:#991B1B;}
+/* Progress steps */
+.track-steps{padding:28px 24px;border-bottom:1px solid var(--border);}
+.track-steps-row{display:flex;align-items:flex-start;gap:0;position:relative;}
+.track-steps-row::before{content:'';position:absolute;top:16px;left:16px;right:16px;height:2px;background:var(--border);z-index:0;}
+.track-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;}
+.ts-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:13px;margin-bottom:8px;transition:all .3s;}
+.ts-dot.done{background:var(--green);border-color:var(--green);color:#fff;}
+.ts-dot.active{background:var(--rose-dk);border-color:var(--rose-dk);color:#fff;box-shadow:0 0 0 4px var(--blush);}
+.ts-dot.cancelled{background:#F87171;border-color:#F87171;color:#fff;}
+.ts-label{font-size:11px;color:var(--muted);line-height:1.4;max-width:64px;}
+.ts-label.active{color:var(--rose-dk);font-weight:500;}
+.ts-label.done{color:var(--green);}
+/* Order details */
+.track-details{padding:20px 24px;}
+.td-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.td-row:last-child{border-bottom:none;}
+.td-key{color:var(--muted);}
+.td-val{font-weight:500;color:var(--charcoal);}
+/* Not found */
+.track-notfound{text-align:center;padding:40px 20px;}
+.track-notfound .nf-icon{font-size:52px;margin-bottom:14px;}
+.track-notfound h3{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:8px;}
+.track-notfound p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+.track-wa-btn{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;border:none;padding:12px 24px;border-radius:6px;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;cursor:pointer;}
+/* ── ABOUT PAGE ── */
+.about-hero{background:var(--charcoal);padding:80px 5% 70px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.about-img-box{width:100%;aspect-ratio:4/5;border-radius:16px;background:linear-gradient(160deg,#3D1F1F,#5C2E2E);display:flex;align-items:center;justify-content:center;font-size:120px;position:relative;overflow:hidden;}
+.about-img-box::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(30,26,22,.6) 0%,transparent 60%);}
+.about-img-label{position:absolute;bottom:20px;left:20px;z-index:2;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--ivory);font-style:italic;}
+.about-hero-tag{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.about-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.5vw,52px);color:var(--ivory);line-height:1.1;margin-bottom:20px;}
+.about-hero h1 em{color:var(--rose);font-style:italic;}
+.about-hero p{color:var(--muted);font-size:15px;font-weight:300;line-height:1.9;margin-bottom:16px;}
+.about-body{padding:64px 5%;}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-bottom:64px;}
+.about-grid.reverse{direction:rtl;}
+.about-grid.reverse>*{direction:ltr;}
+.about-section-img{width:100%;aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:80px;}
+.about-section-content{}
+.about-tag{font-size:11px;font-weight:500;color:var(--rose-dk);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.about-tag::before{content:'';width:24px;height:1px;background:var(--rose-dk);}
+.about-h2{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.2;margin-bottom:16px;color:var(--charcoal);}
+.about-p{font-size:14px;color:var(--muted);line-height:1.9;font-weight:300;margin-bottom:14px;}
+.about-values{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:48px 0;}
+.av-card{background:var(--warm);border-radius:10px;padding:24px 20px;text-align:center;}
+.av-icon{font-size:32px;margin-bottom:12px;}
+.av-title{font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:8px;color:var(--charcoal);}
+.av-desc{font-size:13px;color:var(--muted);line-height:1.7;font-weight:300;}
+.about-cta{background:var(--charcoal);border-radius:16px;padding:48px;text-align:center;margin:0 0 64px;}
+.about-cta h2{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--ivory);margin-bottom:12px;}
+.about-cta p{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:28px;max-width:480px;margin-left:auto;margin-right:auto;}
+.about-cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+@media(max-width:768px){
+  .about-hero{grid-template-columns:1fr;gap:28px;padding:48px 4%;}
+  .about-img-box{display:none;}
+  .about-grid,.about-grid.reverse{grid-template-columns:1fr;direction:ltr;}
+  .about-section-img{display:none;}
+  .about-values{grid-template-columns:1fr;}
+  .about-body{padding:40px 4%;}
+  .about-cta{padding:32px 20px;}
+}
 /* ── UPLOAD & EDIT ── */
 .upload-zone{border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;margin-bottom:4px;}
 .upload-zone:hover{border-color:var(--rose-dk);background:var(--blush);}
@@ -822,6 +925,8 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
   <div class="logo" onclick="showPage('shop')">Tina<span>Select</span></div>
   <div class="nav-right">
     <button class="nav-link" onclick="showPage('shop')">Shop</button>
+    <button class="nav-link" onclick="showPage('about')">Our Story</button>
+    <button class="nav-link" onclick="showPage('tracking')">Track Order</button>
     <button class="cart-btn" onclick="openCart()">🛒 Cart <span class="cc" id="cartCount">0</span></button>
   </div>
 </nav>
@@ -919,6 +1024,8 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
       <div>
         <div class="fhead">Help</div>
         <ul class="flist">
+          <li onclick="showPage('about')">Our Story</li>
+          <li onclick="showPage('tracking')">Track My Order</li>
           <li onclick="openWA('Hi! I want to place a custom order')">Custom Orders</li>
           <li onclick="openWA('Hi! I need sizing help')">Size Guide</li>
           <li onclick="openWA('Hi! I need help')">Contact Us</li>
@@ -1016,6 +1123,216 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
     <div class="sh"><h2 class="st">You Might Also Love</h2></div>
     <div class="pgrid" id="relatedGrid"></div>
   </section>
+</div>
+
+<!-- ══════ ABOUT PAGE ══════ -->
+<div class="page" id="page-about">
+
+  <!-- Hero -->
+  <section class="about-hero">
+    <div>
+      <div class="about-hero-tag"><div class="eline"></div><span class="etxt">Handmade in Accra, Ghana</span></div>
+      <h1>Fashion Made With <em>Love & Purpose</em></h1>
+      <p>TinaSelect was born from a simple belief — every woman deserves to wear something made especially for her. Not mass-produced, not generic. Something crafted with intention, care, and a personal touch.</p>
+      <p>Every stitch, every cut, every colour choice is made by hand, right here in Accra. When you wear TinaSelect, you wear a piece of Ghana.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:28px">
+        <button class="btn-fill" onclick="showPage('shop');scrollToProds()">Shop the Collection</button>
+        <button class="btn-ghost" onclick="openWA('Hi! I want to know more about TinaSelect')">Chat With Us</button>
+      </div>
+    </div>
+    <div class="about-img-box">
+      <span>👗</span>
+      <div class="about-img-label">Handcrafted in Accra</div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <div class="trust">
+    <div class="ti"><div class="ti-icon">✂️</div><div class="ti-title">100% Handmade</div><div class="ti-desc">Every piece crafted by hand</div></div>
+    <div class="ti"><div class="ti-icon">📍</div><div class="ti-title">Made in Accra</div><div class="ti-desc">Proudly Ghanaian</div></div>
+    <div class="ti"><div class="ti-icon">👗</div><div class="ti-title">Made to Order</div><div class="ti-desc">Unique for every customer</div></div>
+    <div class="ti"><div class="ti-icon">💕</div><div class="ti-title">500+ Happy Customers</div><div class="ti-desc">And counting</div></div>
+  </div>
+
+  <div class="about-body">
+
+    <!-- Our Story -->
+    <div class="about-grid">
+      <div class="about-section-img" style="background:linear-gradient(160deg,#F9EDE8,#F0D5CC)">✂️</div>
+      <div class="about-section-content">
+        <div class="about-tag">Our Story</div>
+        <h2 class="about-h2">From a Passion for Sewing to Ghana's Favourite Handmade Brand</h2>
+        <p class="about-p">TinaSelect started the way most great things do — with passion, a needle and thread, and a dream. What began as making clothes for friends and family quickly grew into something much bigger as word spread about the quality, the fit, and the love put into every piece.</p>
+        <p class="about-p">Today, TinaSelect serves hundreds of women across Ghana, crafting everything from elegant wrap dresses and bold Ankara two-pieces to everyday tops and chic palazzo trousers. Each item is made to order — meaning it's made specifically for you, in your size, in your chosen colour.</p>
+      </div>
+    </div>
+
+    <!-- Our Mission -->
+    <div class="about-grid reverse">
+      <div class="about-section-img" style="background:linear-gradient(160deg,#E8F9ED,#CCF0D9)">🌍</div>
+      <div class="about-section-content">
+        <div class="about-tag">Our Mission</div>
+        <h2 class="about-h2">Celebrating African Women Through Fashion</h2>
+        <p class="about-p">We believe fashion should celebrate who you are — your curves, your style, your culture. That's why we offer sizes 6 through 20, and work with a wide range of fabrics from contemporary prints to vibrant Ankara and Kente-trimmed designs.</p>
+        <p class="about-p">Our mission is simple: to make every Ghanaian woman feel beautiful, confident, and seen — at a price that makes sense. No compromise on quality, no compromise on you.</p>
+      </div>
+    </div>
+
+    <!-- Values -->
+    <div style="text-align:center;margin-bottom:32px">
+      <div class="about-tag" style="justify-content:center">What We Stand For</div>
+      <h2 class="about-h2" style="max-width:500px;margin:0 auto">The values behind every piece we make</h2>
+    </div>
+    <div class="about-values">
+      <div class="av-card">
+        <div class="av-icon">✂️</div>
+        <div class="av-title">Handcrafted Quality</div>
+        <div class="av-desc">Every item is sewn by hand with care and precision. No shortcuts, no mass production — just genuine craftsmanship in every stitch.</div>
+      </div>
+      <div class="av-card">
+        <div class="av-icon">🎨</div>
+        <div class="av-title">Your Style, Your Way</div>
+        <div class="av-desc">Choose from 50+ colours, sizes 6–20, and custom designs. We make it for you — not just anyone. That's the TinaSelect difference.</div>
+      </div>
+      <div class="av-card">
+        <div class="av-icon">🇬🇭</div>
+        <div class="av-title">Proudly Ghanaian</div>
+        <div class="av-desc">Made in Accra, inspired by African fashion, delivered across Ghana. Every purchase supports local craftsmanship and our community.</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="about-cta">
+      <h2>Ready to Wear Something Made for You?</h2>
+      <p>Browse our full collection of handmade dresses, tops, palazzo trousers and more. Or reach out on WhatsApp for a custom order — we'd love to make something special just for you.</p>
+      <div class="about-cta-btns">
+        <button class="btn-fill" onclick="showPage('shop');scrollToProds()">Shop the Collection</button>
+        <button style="background:transparent;color:var(--ivory);border:1px solid rgba(255,255,255,.25);padding:14px 32px;border-radius:3px;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer" onclick="openWA('Hi! I want to place a custom order on TinaSelect')">Custom Order via WhatsApp</button>
+      </div>
+    </div>
+
+    <!-- Contact info -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center">
+      <div style="background:var(--warm);border-radius:10px;padding:24px">
+        <div style="font-size:28px;margin-bottom:10px">📞</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:6px">Call Us</div>
+        <div style="font-size:13px;color:var(--muted)">0540250468<br>0531872111</div>
+      </div>
+      <div style="background:var(--warm);border-radius:10px;padding:24px;cursor:pointer" onclick="openWA('Hi! I have a question about TinaSelect')">
+        <div style="font-size:28px;margin-bottom:10px">💬</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:6px">WhatsApp</div>
+        <div style="font-size:13px;color:var(--muted)">Chat with us anytime<br>Quick response</div>
+      </div>
+      <div style="background:var(--warm);border-radius:10px;padding:24px">
+        <div style="font-size:28px;margin-bottom:10px">📍</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:6px">Location</div>
+        <div style="font-size:13px;color:var(--muted)">Accra, Ghana<br>Delivery nationwide</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="fgrid">
+      <div>
+        <div class="fbrand">TinaSelect</div>
+        <p class="fdesc">Handmade fashion crafted with love in Accra, Ghana. Every piece is unique, made to order, and delivered to your door.</p>
+        <div style="margin-top:16px;font-size:13px;color:var(--sand)">📞 0540250468 &nbsp;·&nbsp; 📞 0531872111</div>
+      </div>
+      <div>
+        <div class="fhead">Shop</div>
+        <ul class="flist">
+          <li onclick="filterCat('dress',null)">Dresses</li>
+          <li onclick="filterCat('palazzo',null)">Palazzo Trousers</li>
+          <li onclick="filterCat('twopiece',null)">Two Pieces</li>
+          <li onclick="filterCat('top',null)">Tops</li>
+        </ul>
+      </div>
+      <div>
+        <div class="fhead">Help</div>
+        <ul class="flist">
+          <li onclick="showPage('about')">Our Story</li>
+          <li onclick="showPage('tracking')">Track My Order</li>
+          <li onclick="openWA('Hi! I want to place a custom order')">Custom Orders</li>
+          <li onclick="openWA('Hi! I need sizing help')">Size Guide</li>
+          <li onclick="openWA('Hi! I need help')">Contact Us</li>
+        </ul>
+        <div class="fhead" style="margin-top:18px">Contact</div>
+        <ul class="flist">
+          <li>📞 0540250468</li>
+          <li>📞 0531872111</li>
+          <li onclick="openWA('Hi!')">💬 WhatsApp Us</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbot">© 2025 TinaSelect · Handmade with ♥ in Accra, Ghana</div>
+  </footer>
+</div>
+
+<!-- ══════ TRACKING PAGE ══════ -->
+<div class="page" id="page-tracking">
+
+  <div class="track-hero">
+    <h1>Track Your Order</h1>
+    <p>Enter your order reference number to check your delivery status. Your reference starts with <strong style="color:var(--rose)">#TS-</strong></p>
+    <div class="track-search-box">
+      <input class="track-input" id="trackInput" type="text" placeholder="#TS-1234"
+        oninput="this.value=this.value.toUpperCase()"
+        onkeydown="if(event.key==='Enter')trackOrder()">
+      <button class="track-btn" onclick="trackOrder()">Track →</button>
+    </div>
+  </div>
+
+  <div class="track-body">
+    <div id="trackResult"></div>
+
+    <div style="margin-top:40px;background:var(--warm);border-radius:12px;padding:24px;text-align:center">
+      <div style="font-size:22px;margin-bottom:8px">💬</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:6px">Need help with your order?</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.7">
+        Send us your order reference on WhatsApp and we'll give you a full update right away.
+      </div>
+      <button class="track-wa-btn" onclick="showPage('tracking');document.getElementById('trackInput').value=document.getElementById('oRef').textContent;trackOrder();closeAll()">
+        💬 WhatsApp Us
+      </button>
+      <div style="margin-top:14px;font-size:12px;color:var(--muted)">📞 0540250468 · 0531872111</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="fgrid">
+      <div>
+        <div class="fbrand">TinaSelect</div>
+        <p class="fdesc">Handmade fashion crafted with love in Accra, Ghana. Every piece is unique, made to order, and delivered to your door.</p>
+        <div style="margin-top:16px;font-size:13px;color:var(--sand)">📞 0540250468 &nbsp;·&nbsp; 📞 0531872111</div>
+      </div>
+      <div>
+        <div class="fhead">Shop</div>
+        <ul class="flist">
+          <li onclick="filterCat('dress',null)">Dresses</li>
+          <li onclick="filterCat('palazzo',null)">Palazzo Trousers</li>
+          <li onclick="filterCat('twopiece',null)">Two Pieces</li>
+          <li onclick="filterCat('top',null)">Tops</li>
+        </ul>
+      </div>
+      <div>
+        <div class="fhead">Help</div>
+        <ul class="flist">
+          <li onclick="showPage('about')">Our Story</li>
+          <li onclick="showPage('tracking')">Track My Order</li>
+          <li onclick="openWA('Hi! I want to place a custom order')">Custom Orders</li>
+          <li onclick="openWA('Hi! I need help')">Contact Us</li>
+        </ul>
+        <div class="fhead" style="margin-top:18px">Contact</div>
+        <ul class="flist">
+          <li>📞 0540250468</li>
+          <li>📞 0531872111</li>
+          <li onclick="openWA('Hi!')">💬 WhatsApp Us</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbot">© 2025 TinaSelect · Handmade with ♥ in Accra, Ghana</div>
+  </footer>
 </div>
 
 <!-- ══════ DASHBOARD PAGE ══════ -->
@@ -1414,26 +1731,26 @@ const bgMap = {
 };
 
 const products = [
-  {id:1,name:'Kente-Trim Wrap Dress',cat:'dress',price:180,emoji:'👗',bg:'dress',desc:'Elegant wrap-style handmade dress with subtle Kente fabric trim. Flattering silhouette, perfect for church, events, or dinner dates.',specs:{Type:'Wrap Dress',Fabric:'Cotton blend + Kente trim',Fit:'Fitted waist, flared hem',Delivery:'4–6 working days'}},
-  {id:2,name:'Ankara Midi Dress',cat:'dress',price:160,emoji:'👗',bg:'dress',desc:'Vibrant Ankara print midi dress, handcut and sewn to perfection. Side pockets and sleeveless design.',specs:{Type:'Midi Dress',Fabric:'Ankara cotton',Fit:'A-line, knee-length',Delivery:'4–6 working days'}},
-  {id:3,name:'Flowy Maxi Dress',cat:'dress',price:200,emoji:'👗',bg:'dress',desc:'Stunning floor-length handmade maxi dress in lightweight chiffon. Adjustable tie waist. Ideal for beach outings and events.',specs:{Type:'Maxi Dress',Fabric:'Chiffon',Fit:'Loose, flowing',Delivery:'4–6 working days'}},
-  {id:4,name:'Wide-Leg Palazzo Trousers',cat:'palazzo',price:130,emoji:'👘',bg:'palazzo',desc:'Chic wide-leg palazzo trousers with high waist and elastic band. Ultra-comfortable and stylish.',specs:{Type:'Palazzo Trousers',Fabric:'Crepe / Ankara',Fit:'Wide leg, high waist',Delivery:'4–6 working days'}},
-  {id:5,name:'Ankara Palazzo Set',cat:'palazzo',price:150,emoji:'👘',bg:'palazzo',desc:'Matching Ankara palazzo trousers. Eye-catching prints that pair beautifully with plain tops.',specs:{Type:'Palazzo Trousers',Fabric:'Ankara',Fit:'Wide leg',Delivery:'4–6 working days'}},
-  {id:6,name:'Lace Two Piece Combo',cat:'twopiece',price:220,emoji:'✨',bg:'twopiece',desc:'Elegant lace two-piece set featuring a crop top and matching skirt or trouser. Perfect for parties and formal events.',specs:{Type:'Two Piece Set',Fabric:'Lace overlay',Includes:'Top + Bottom',Delivery:'4–6 working days'}},
-  {id:7,name:'Ankara Two Piece Combo',cat:'twopiece',price:190,emoji:'✨',bg:'twopiece',desc:'Bold Ankara two-piece combo — top and matching trousers. A complete handmade outfit that turns heads.',specs:{Type:'Two Piece Set',Fabric:'Ankara cotton',Includes:'Top + Trouser',Delivery:'4–6 working days'}},
-  {id:8,name:'Reversible Top',cat:'top',price:85,emoji:'🔄',bg:'reversible',desc:'Innovative reversible top — two styles in one! Wear it one way for casual, flip it for elegant.',specs:{Type:'Reversible Top',Fabric:'Cotton blend',Styles:'2-in-1',Delivery:'4–6 working days'}},
-  {id:9,name:'Nova Top',cat:'top',price:75,emoji:'🌟',bg:'nova',desc:'Trendy Nova top with a modern cut and clean finish. Versatile enough for work or nights out.',specs:{Type:'Nova Top',Fabric:'Stretch cotton',Fit:'Semi-fitted',Delivery:'4–6 working days'}},
-  {id:10,name:'Classic Basic Top',cat:'top',price:55,emoji:'👕',bg:'basic',desc:'Clean, simple, and perfectly made basic top. Available in a wide range of colours. Must-have.',specs:{Type:'Basic Top',Fabric:'100% cotton',Fit:'Regular fit',Delivery:'4–6 working days'}},
-  {id:11,name:'Backless Occasion Top',cat:'top',price:95,emoji:'🔓',bg:'backless',desc:'Elegant backless top with a flattering open-back design. Perfect for dinners and special occasions.',specs:{Type:'Backless Top',Fabric:'Satin / crepe',Fit:'Fitted front, open back',Delivery:'4–6 working days'}},
-  {id:12,name:'Cow Print Top',cat:'top',price:70,emoji:'🐄',bg:'cow',desc:'Fun and fashionable cow print top — a bold statement piece that pairs well with plain bottoms.',specs:{Type:'Cow Print Top',Fabric:'Cotton jersey',Fit:'Relaxed fit',Delivery:'4–6 working days'}},
-  {id:13,name:'Ankara Crop Top',cat:'crop',price:65,emoji:'🩱',bg:'crop',desc:'Vibrant Ankara crop top with a short hem. Great for pairing with palazzo trousers, jeans, or skirts.',specs:{Type:'Crop Top',Fabric:'Ankara cotton',Fit:'Cropped, fitted',Delivery:'4–6 working days'}},
-  {id:14,name:'Ruched Crop Top',cat:'crop',price:60,emoji:'🩱',bg:'crop',desc:'Trendy ruched crop top with a figure-flattering design. Stretchy fabric for comfort.',specs:{Type:'Crop Top',Fabric:'Stretch crepe',Fit:'Fitted, cropped',Delivery:'4–6 working days'}},
-  {id:15,name:'Strapless Tube Top',cat:'top',price:50,emoji:'🎀',bg:'tube',desc:'Simple and sleek strapless tube top. Boned interior for secure fit. Great for layering or solo.',specs:{Type:'Tube Top',Fabric:'Cotton blend',Fit:'Strapless, fitted',Delivery:'4–6 working days'}},
-  {id:16,name:'Printed Tube Top',cat:'top',price:55,emoji:'🎀',bg:'tube',desc:'Eye-catching printed tube top. Strapless, comfortable, and versatile.',specs:{Type:'Tube Top',Fabric:'Jersey cotton',Fit:'Strapless',Delivery:'4–6 working days'}},
-  {id:17,name:'Off-Shoulder Maxi Dress',cat:'dress',price:195,emoji:'👗',bg:'dress',desc:'Romantic off-shoulder maxi dress with ruffled hem. Ideal for weddings and baby showers.',specs:{Type:'Off-Shoulder Dress',Fabric:'Chiffon / lace',Fit:'Flared, floor-length',Delivery:'4–6 working days'}},
-  {id:18,name:'Co-ord Crop Set',cat:'twopiece',price:170,emoji:'✨',bg:'twopiece',desc:'Matching co-ord crop top and wide-leg trouser set. Clean lines, modern cut.',specs:{Type:'Co-ord Set',Fabric:'Linen blend',Includes:'Crop Top + Trouser',Delivery:'4–6 working days'}},
-  {id:19,name:'Spaghetti Strap Crop Top',cat:'crop',price:58,emoji:'🩱',bg:'crop',desc:'Delicate spaghetti strap crop top. Light and breezy — ideal for warm Accra days.',specs:{Type:'Crop Top',Fabric:'Cotton',Fit:'Slim, cropped',Delivery:'4–6 working days'}},
-  {id:20,name:'Peplum Top',cat:'top',price:80,emoji:'👚',bg:'basic',desc:'Flattering peplum top with a flared waist detail that adds shape to any figure.',specs:{Type:'Peplum Top',Fabric:'Crepe',Fit:'Fitted top, flared peplum',Delivery:'4–6 working days'}},
+  {id:1,name:'Kente-Trim Wrap Dress',cat:'dress',price:180,emoji:'👗',bg:'dress',desc:'Elegant wrap-style handmade dress with subtle Kente fabric trim. Flattering silhouette, perfect for church, events, or dinner dates.',specs:{Type:'Wrap Dress',Delivery:'4–6 working days'},inStock:true}},
+  {id:2,name:'Ankara Midi Dress',cat:'dress',price:160,emoji:'👗',bg:'dress',desc:'Vibrant Ankara print midi dress, handcut and sewn to perfection. Side pockets and sleeveless design.',specs:{Type:'Midi Dress',Delivery:'4–6 working days'},inStock:true}},
+  {id:3,name:'Flowy Maxi Dress',cat:'dress',price:200,emoji:'👗',bg:'dress',desc:'Stunning floor-length handmade maxi dress in lightweight chiffon. Adjustable tie waist. Ideal for beach outings and events.',specs:{Type:'Maxi Dress',Delivery:'4–6 working days'},inStock:true}},
+  {id:4,name:'Wide-Leg Palazzo Trousers',cat:'palazzo',price:130,emoji:'👘',bg:'palazzo',desc:'Chic wide-leg palazzo trousers with high waist and elastic band. Ultra-comfortable and stylish.',specs:{Type:'Palazzo Trousers',Delivery:'4–6 working days'},inStock:true}},
+  {id:5,name:'Ankara Palazzo Set',cat:'palazzo',price:150,emoji:'👘',bg:'palazzo',desc:'Matching Ankara palazzo trousers. Eye-catching prints that pair beautifully with plain tops.',specs:{Type:'Palazzo Trousers',Delivery:'4–6 working days'},inStock:true}},
+  {id:6,name:'Lace Two Piece Combo',cat:'twopiece',price:220,emoji:'✨',bg:'twopiece',desc:'Elegant lace two-piece set featuring a crop top and matching skirt or trouser. Perfect for parties and formal events.',specs:{Type:'Two Piece Set',Includes:'Top + Bottom',Delivery:'4–6 working days'},inStock:true}},
+  {id:7,name:'Ankara Two Piece Combo',cat:'twopiece',price:190,emoji:'✨',bg:'twopiece',desc:'Bold Ankara two-piece combo — top and matching trousers. A complete handmade outfit that turns heads.',specs:{Type:'Two Piece Set',Includes:'Top + Trouser',Delivery:'4–6 working days'},inStock:true}},
+  {id:8,name:'Reversible Top',cat:'top',price:85,emoji:'🔄',bg:'reversible',desc:'Innovative reversible top — two styles in one! Wear it one way for casual, flip it for elegant.',specs:{Type:'Reversible Top',Styles:'2-in-1',Delivery:'4–6 working days'},inStock:true}},
+  {id:9,name:'Nova Top',cat:'top',price:75,emoji:'🌟',bg:'nova',desc:'Trendy Nova top with a modern cut and clean finish. Versatile enough for work or nights out.',specs:{Type:'Nova Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:10,name:'Classic Basic Top',cat:'top',price:55,emoji:'👕',bg:'basic',desc:'Clean, simple, and perfectly made basic top. Available in a wide range of colours. Must-have.',specs:{Type:'Basic Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:11,name:'Backless Occasion Top',cat:'top',price:95,emoji:'🔓',bg:'backless',desc:'Elegant backless top with a flattering open-back design. Perfect for dinners and special occasions.',specs:{Type:'Backless Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:12,name:'Cow Print Top',cat:'top',price:70,emoji:'🐄',bg:'cow',desc:'Fun and fashionable cow print top — a bold statement piece that pairs well with plain bottoms.',specs:{Type:'Cow Print Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:13,name:'Ankara Crop Top',cat:'crop',price:65,emoji:'🩱',bg:'crop',desc:'Vibrant Ankara crop top with a short hem. Great for pairing with palazzo trousers, jeans, or skirts.',specs:{Type:'Crop Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:14,name:'Ruched Crop Top',cat:'crop',price:60,emoji:'🩱',bg:'crop',desc:'Trendy ruched crop top with a figure-flattering design. Stretchy fabric for comfort.',specs:{Type:'Crop Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:15,name:'Strapless Tube Top',cat:'top',price:50,emoji:'🎀',bg:'tube',desc:'Simple and sleek strapless tube top. Boned interior for secure fit. Great for layering or solo.',specs:{Type:'Tube Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:16,name:'Printed Tube Top',cat:'top',price:55,emoji:'🎀',bg:'tube',desc:'Eye-catching printed tube top. Strapless, comfortable, and versatile.',specs:{Type:'Tube Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:17,name:'Off-Shoulder Maxi Dress',cat:'dress',price:195,emoji:'👗',bg:'dress',desc:'Romantic off-shoulder maxi dress with ruffled hem. Ideal for weddings and baby showers.',specs:{Type:'Off-Shoulder Dress',Delivery:'4–6 working days'},inStock:true}},
+  {id:18,name:'Co-ord Crop Set',cat:'twopiece',price:170,emoji:'✨',bg:'twopiece',desc:'Matching co-ord crop top and wide-leg trouser set. Clean lines, modern cut.',specs:{Type:'Co-ord Set',Includes:'Crop Top + Trouser',Delivery:'4–6 working days'},inStock:true}},
+  {id:19,name:'Spaghetti Strap Crop Top',cat:'crop',price:58,emoji:'🩱',bg:'crop',desc:'Delicate spaghetti strap crop top. Light and breezy — ideal for warm Accra days.',specs:{Type:'Crop Top',Delivery:'4–6 working days'},inStock:true}},
+  {id:20,name:'Peplum Top',cat:'top',price:80,emoji:'👚',bg:'basic',desc:'Flattering peplum top with a flared waist detail that adds shape to any figure.',specs:{Type:'Peplum Top',Delivery:'4–6 working days'},inStock:true}},
 ];
 
 // Promo codes
@@ -1453,7 +1770,7 @@ function showPage(p){
   document.getElementById('page-'+p).classList.add('active');
   window.scrollTo(0,0);
   if(p==='shop') renderProducts(filtered);
-  if(p==='dashboard'){renderOrders();renderInventory();renderTop();renderPromoTable();}
+  if(p==='dashboard'){renderOrders();renderInventory();renderTop();renderPromoTable();if(fbConfigured)listenToOrders();}
   gaEvent('page_view',{page_title:'TinaSelect — '+p,page_location:window.location.href+'#'+p});
 }
 
@@ -1537,7 +1854,7 @@ function openDetail(id){
     dMain.innerHTML=`<span style="font-size:110px">${p.emoji}</span><div class="dimain-hint">🔍 Tap to zoom</div>`;
   }
   document.getElementById('dThumbs').innerHTML=[p.photo||p.emoji,'📦','🏷️'].map((e,i)=>`<div class="dthumb ${i===0?'active':''}" style="background:${bgMap[p.bg]||bgMap.basic};overflow:hidden">${(i===0&&p.photo)?`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover">`:typeof e==='string'&&e.startsWith('data:')?`<img src="${e}" style="width:100%;height:100%;object-fit:cover">`:`<span>${e}</span>`}</div>`).join('');
-  document.getElementById('dBadges').innerHTML=`<span class="dbadge db-rose">Handmade</span><span class="dbadge db-gold">Made to Order</span><span class="dbadge db-green">Delivery: 4–6 working days</span>`;
+  document.getElementById('dBadges').innerHTML=`<span class="dbadge db-rose">Handmade</span><span class="dbadge db-gold">Made to Order</span><span class="dbadge db-green">Delivery: 4–6 working days</span><span class="dbadge" style="background:${p.inStock!==false?'#D1FAE5':'#FEE2E2'};color:${p.inStock!==false?'#065F46':'#991B1B'}">${p.inStock!==false?'✅ In Stock':'❌ Out of Stock'}</span>`;
   document.getElementById('dName').textContent=p.name;
   document.getElementById('dPrice').textContent=`GH₵${p.price}`;
   document.getElementById('dDesc').textContent=p.desc;
@@ -1908,6 +2225,14 @@ function onPaymentSuccess(ref){
       coupon:snapPromo?snapPromo.code:'',
       items:snapCart.map(i=>({item_id:i.id,item_name:i.name,item_category:i.cat,item_variant:i.size+' / '+i.color,price:i.price,quantity:i.qty}))
     });
+    // Save order to Firestore for tracking
+    saveOrderToFirestore({
+      ref, name, phone, addr, note,
+      total, sub, disc,
+      items: snapCart.map(i=>({name:i.name,size:i.size,color:i.color,qty:i.qty,price:i.price})),
+      promo: snapPromo?snapPromo.code:null,
+      status:'processing'
+    });
     cart=[];appliedPromo=null;updateCC();
   },2500);
 }
@@ -2005,7 +2330,12 @@ function renderInventory(){
       <div class="iinfo">
         <div class="iname">${p.name}</div>
         <div class="iprice">GH₵${p.price}</div>
-        <span class="stk">Available</span>
+        <div class="stock-toggle" onclick="toggleStock(${p.id})">
+          <div class="tog-track ${p.inStock!==false?'on':'off'}">
+            <div class="tog-knob"></div>
+          </div>
+          <span class="tog-label" style="color:${p.inStock!==false?'#065F46':'#991B1B'}">${p.inStock!==false?'✅ In Stock':'❌ Out of Stock'}</span>
+        </div>
         <div class="iacts">
           <button class="ibtn" onclick="openEditModal(${p.id})">✏️ Edit</button>
           <button class="ibtn del" onclick="removeProduct(${p.id})">🗑️ Remove</button>
@@ -2160,6 +2490,15 @@ function saveEdit(){
   if(filtered.find(x=>x.id===id)) renderProducts(filtered);
   toast(`${name} updated!`);
 }
+function toggleStock(id){
+  const p=products.find(x=>x.id===id);
+  if(!p) return;
+  p.inStock=p.inStock===false?true:false;
+  renderInventory();
+  renderProducts(filtered);
+  toast(`${p.name} marked as ${p.inStock?'✅ In Stock':'❌ Out of Stock'}`);
+}
+
 function removeProduct(id){
   const p=products.find(x=>x.id===id);
   if(!p) return;
@@ -2177,7 +2516,7 @@ function addProduct(){
   const desc=document.getElementById('nDesc').value;
   if(!name||!price){toast('Please enter name and price');return;}
   const emojis={dress:'👗',palazzo:'👘',twopiece:'✨',top:'👚',crop:'🩱'};
-  products.push({id:Date.now(),name,cat,price:parseInt(price),emoji:emojis[cat]||'👗',bg:cat,desc,specs:{},
+  products.push({id:Date.now(),name,cat,price:parseInt(price),emoji:emojis[cat]||'👗',bg:cat,desc,specs:{},inStock:true,
     photo:addMediaType==='photo'?addPhotoData:null,
     video:addMediaType==='video'?addVideoData:null});
   addPhotoData=null; addVideoData=null; addMediaType='photo';
@@ -2192,7 +2531,7 @@ function switchDash(tab,el){
   document.getElementById('dash-'+tab).style.display='block';
   document.querySelectorAll('.dnbtn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  if(tab==='orders')renderOrders();
+  if(tab==='orders'){ renderOrders(); if(fbConfigured) listenToOrders(); }
   if(tab==='inventory')renderInventory();
   if(tab==='promos')renderPromoTable();
 }
@@ -2403,50 +2742,89 @@ async function saveFirebaseConfig(){
 }
 
 // ── FIRESTORE: LOAD PRODUCTS ──
+// ── FIRESTORE: REAL-TIME LISTENER ──
+// onSnapshot keeps store in sync with cloud automatically — no polling needed
+let unsubscribeProducts = null;
+
 function loadProductsFromFirestore(){
   if(!db){ renderProducts(products); return; }
-  showLoading(true,'Loading products from Firebase...');
-  db.collection('products').orderBy('createdAt','desc').get()
-    .then(snap=>{
+
+  // Unsubscribe any existing listener first
+  if(unsubscribeProducts) unsubscribeProducts();
+
+  showLoading(true,'Connecting to cloud...');
+  let firstLoad=true;
+
+  unsubscribeProducts = db.collection('products')
+    .orderBy('createdAt','desc')
+    .onSnapshot(snap=>{
       if(!snap.empty){
-        const fp=snap.docs.map(doc=>({...doc.data(),id:doc.id}));
+        const fp=snap.docs.map(doc=>({...doc.data(), id:doc.id}));
         products.length=0;
         fp.forEach(p=>products.push(p));
-        filtered=[...products];
+        // Reapply active category filter
+        filtered=activeCat==='all'?[...products]:products.filter(p=>p.cat===activeCat);
       } else {
-        // First time — seed with default products if Firestore is empty
-        // (products array already has defaults)
         filtered=[...products];
       }
       renderProducts(filtered);
       renderInventory();
+      // Show sync indicator for non-first updates
+      if(!firstLoad){
+        showSyncBadge();
+      }
       showLoading(false);
-      toast(`Loaded ${products.length} products from Firebase ✓`);
-    })
-    .catch(e=>{
-      console.error('Firestore load error:',e);
+      if(firstLoad){
+        firstLoad=false;
+        console.log(`✅ Real-time sync active — ${products.length} products loaded`);
+      }
+      // Update KPI count
+      const kpi=document.getElementById('kpiProds');
+      if(kpi) kpi.textContent=products.length;
+    },
+    e=>{
+      console.error('Firestore listener error:',e);
       showLoading(false);
       renderProducts(products);
-      toast('Could not load from Firebase — check Firestore rules (Test Mode)');
+      toast('Cloud sync lost — showing local data');
     });
+}
+
+// ── SYNC BADGE — subtle indicator when cloud pushes an update ──
+function showSyncBadge(){
+  let badge=document.getElementById('syncBadge');
+  if(!badge){
+    badge=document.createElement('div');
+    badge.id='syncBadge';
+    badge.style.cssText='position:fixed;top:70px;right:16px;background:#34D399;color:#fff;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:500;z-index:997;opacity:0;transition:opacity .3s;pointer-events:none';
+    badge.textContent='✓ Synced';
+    document.body.appendChild(badge);
+  }
+  badge.style.opacity='1';
+  clearTimeout(badge._t);
+  badge._t=setTimeout(()=>badge.style.opacity='0', 2000);
 }
 
 // ── FIRESTORE: ADD ──
 async function addProductToFirestore(product){
   if(!db) return product;
-  showLoading(true,'Saving to Firebase...');
   try{
     let photoURL=product.photo||null;
-    if(product.photo&&product.photo.startsWith('data:')) photoURL=await uploadPhotoToStorage(product.photo,'prod_'+Date.now());
-    const docData={...product,photo:photoURL,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    let videoURL=product.video||null;
+    if(product.photo&&product.photo.startsWith('data:'))
+      photoURL=await uploadPhotoToStorage(product.photo,'prod_'+Date.now());
+    if(product.video&&product.video.startsWith('data:'))
+      videoURL=await uploadPhotoToStorage(product.video,'vid_'+Date.now());
+    const docData={...product,photo:photoURL,video:videoURL,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()};
     delete docData.id;
     const ref=await db.collection('products').add(docData);
-    showLoading(false);
+    // onSnapshot will auto-update UI — no manual render needed
+    showSyncBadge();
     return{...docData,id:ref.id};
   }catch(e){
     console.error('Firestore add error:',e);
-    showLoading(false);
-    toast('Saved locally — Firebase sync failed. Check Firestore rules.');
+    toast('Saved locally — Firebase sync failed');
     return product;
   }
 }
@@ -2454,18 +2832,22 @@ async function addProductToFirestore(product){
 // ── FIRESTORE: UPDATE ──
 async function updateProductInFirestore(product){
   if(!db) return null;
-  showLoading(true,'Updating in Firebase...');
   try{
     let photoURL=product.photo||null;
-    if(product.photo&&product.photo.startsWith('data:')) photoURL=await uploadPhotoToStorage(product.photo,'prod_'+String(product.id));
-    const docData={...product,photo:photoURL,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+    let videoURL=product.video||null;
+    if(product.photo&&product.photo.startsWith('data:'))
+      photoURL=await uploadPhotoToStorage(product.photo,'prod_'+String(product.id));
+    if(product.video&&product.video.startsWith('data:'))
+      videoURL=await uploadPhotoToStorage(product.video,'vid_'+String(product.id));
+    const docData={...product,photo:photoURL,video:videoURL,
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
     delete docData.id;
     await db.collection('products').doc(String(product.id)).set(docData,{merge:true});
-    showLoading(false);
+    // onSnapshot listener auto-updates UI
+    showSyncBadge();
     return photoURL;
   }catch(e){
     console.error('Firestore update error:',e);
-    showLoading(false);
     toast('Updated locally — Firebase sync failed');
     return null;
   }
@@ -2474,27 +2856,116 @@ async function updateProductInFirestore(product){
 // ── FIRESTORE: REMOVE ──
 async function removeProductFromFirestore(id){
   if(!db||!id) return;
-  try{ await db.collection('products').doc(String(id)).delete(); }
+  try{
+    await db.collection('products').doc(String(id)).delete();
+    showSyncBadge();
+  }
   catch(e){ console.error('Firestore delete error:',e); }
 }
 
-// ── STORAGE: UPLOAD PHOTO ──
-async function uploadPhotoToStorage(base64data,filename){
-  if(!storage) return base64data;
+// ── FIRESTORE: SAVE ORDER ──
+async function saveOrderToFirestore(orderData){
+  if(!db) return;
   try{
-    const ref=storage.ref('products/'+filename+'.jpg');
-    const snap=await ref.putString(base64data,'data_url');
-    return await snap.ref.getDownloadURL();
-  }catch(e){ console.error('Storage upload error:',e); return base64data; }
+    await db.collection('orders').add({
+      ...orderData,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    console.log('✅ Order saved to Firestore');
+  }catch(e){ console.error('Order save error:',e); }
 }
 
-// ── LOADING INDICATOR ──
+// ── FIRESTORE: REAL-TIME ORDERS LISTENER (dashboard) ──
+let unsubscribeOrders = null;
+function listenToOrders(){
+  if(!db) return;
+  if(unsubscribeOrders) unsubscribeOrders();
+  unsubscribeOrders=db.collection('orders')
+    .orderBy('createdAt','desc')
+    .limit(50)
+    .onSnapshot(snap=>{
+      if(snap.empty) return;
+      const orders=snap.docs.map(doc=>({...doc.data(),id:doc.id}));
+      const tbody=document.getElementById('ordersBody');
+      if(!tbody) return;
+      tbody.innerHTML=orders.map(o=>`
+        <div class="otrow">
+          <span class="oid">${o.ref||o.id}</span>
+          <span>${o.name||'—'}</span>
+          <span>GH₵${o.total||'—'}</span>
+          <span><span class="ostatus st-${o.status||'pending'}">${o.status||'pending'}</span></span>
+          <span>${o.createdAt?.toDate?o.createdAt.toDate().toLocaleDateString('en-GH',{day:'numeric',month:'short'}):'—'}</span>
+        </div>`).join('');
+      showSyncBadge();
+    }, e=>console.error('Orders listener error:',e));
+}
+
+// ── STORAGE: COMPRESS + UPLOAD PHOTO/VIDEO ──
+// ── IMAGE COMPRESSION — aggressive but maintains quality ──
+async function compressImage(base64data, maxW=600, quality=0.65){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      // Step 1: scale down
+      const scale=Math.min(1, maxW/Math.max(img.width,img.height));
+      const w=Math.round(img.width*scale);
+      const h=Math.round(img.height*scale);
+      // Step 2: draw on canvas
+      const canvas=document.createElement('canvas');
+      canvas.width=w; canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.imageSmoothingEnabled=true;
+      ctx.imageSmoothingQuality='high';
+      ctx.drawImage(img,0,0,w,h);
+      // Step 3: output compressed JPEG
+      const compressed=canvas.toDataURL('image/jpeg', quality);
+      // Log savings for debugging
+      const origKB=Math.round(base64data.length/1024);
+      const newKB=Math.round(compressed.length/1024);
+      console.log(`Image compressed: ${origKB}KB → ${newKB}KB (${Math.round((1-newKB/origKB)*100)}% smaller)`);
+      resolve(compressed);
+    };
+    img.onerror=()=>resolve(base64data);
+    img.src=base64data;
+  });
+}
+
+// ── FAST UPLOAD — base64 → Blob → putBytes (fastest Firebase method) ──
+function base64ToBlob(base64){
+  const parts=base64.split(';base64,');
+  const type=parts[0].split(':')[1];
+  const raw=atob(parts[1]);
+  const arr=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i);
+  return new Blob([arr],{type});
+}
+
+async function uploadPhotoToStorage(base64data, filename){
+  if(!storage) return base64data;
+  try{
+    const isVideo=base64data.startsWith('data:video');
+    let dataToUpload=base64data;
+    if(!isVideo) dataToUpload=await compressImage(base64data);
+    const ext=isVideo?'mp4':'jpg';
+    const ref=storage.ref('products/'+filename+'.'+ext);
+    // putBytes (Blob) is ~3x faster than putString (base64)
+    const blob=base64ToBlob(dataToUpload);
+    const metadata={contentType: isVideo?'video/mp4':'image/jpeg', cacheControl:'public,max-age=31536000'};
+    const snap=await ref.put(blob, metadata);
+    return await snap.ref.getDownloadURL();
+  }catch(e){
+    console.error('Storage upload error:',e);
+    return base64data; // fallback to local base64
+  }
+}
+
+// ── LOADING INDICATOR — non-blocking, never disables UI ──
 function showLoading(show,msg='Saving...'){
   let el=document.getElementById('fbLoader');
   if(!el){
     el=document.createElement('div');el.id='fbLoader';
-    el.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--charcoal);color:var(--ivory);padding:10px 22px;border-radius:6px;font-size:13px;z-index:998;display:flex;align-items:center;gap:10px;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2)';
-    el.innerHTML='<span id="fbSpinner" style="width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;flex-shrink:0"></span><span id="fbLoaderMsg">Saving...</span>';
+    el.style.cssText='position:fixed;top:70px;right:16px;background:var(--charcoal);color:var(--ivory);padding:8px 16px;border-radius:6px;font-size:12px;z-index:997;display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2);pointer-events:none';
+    el.innerHTML='<span id="fbSpinner" style="width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;flex-shrink:0"></span><span id="fbLoaderMsg">Saving...</span>';
     document.body.appendChild(el);
   }
   el.style.display=show?'flex':'none';
@@ -2502,7 +2973,7 @@ function showLoading(show,msg='Saving...'){
   if(lm) lm.textContent=msg;
 }
 
-// ── OVERRIDE addProduct ──
+// ── OVERRIDE addProduct — save locally first, sync Firebase in background ──
 window.addProduct = async function(){
   const name=document.getElementById('nName').value.trim();
   const price=document.getElementById('nPrice').value;
@@ -2510,19 +2981,30 @@ window.addProduct = async function(){
   const desc=document.getElementById('nDesc').value;
   if(!name||!price){toast('Please enter name and price');return;}
   const emojis={dress:'👗',palazzo:'👘',twopiece:'✨',top:'👚',crop:'🩱'};
-  const np={id:Date.now(),name,cat,price:parseInt(price),emoji:emojis[cat]||'👗',bg:cat,desc,specs:{},photo:addPhotoData||null};
-  let saved=np;
-  if(fbConfigured){ saved=await addProductToFirestore(np); }
-  products.unshift(saved);
+  const np={id:Date.now(),name,cat,price:parseInt(price),emoji:emojis[cat]||'👗',bg:cat,desc,specs:{},inStock:true,
+    photo:addMediaType==='photo'?addPhotoData:null,
+    video:addMediaType==='video'?addVideoData:null};
+  // 1. Save locally IMMEDIATELY — UI stays fully responsive
+  products.unshift(np);
   filtered=[...products];
   ['nName','nPrice','nDesc'].forEach(id=>{document.getElementById(id).value='';});
-  clearAddPhoto();
-  renderInventory();renderProducts(filtered);
+  clearAddMedia('add');
+  renderInventory(); renderProducts(filtered);
   document.getElementById('kpiProds').textContent=products.length;
-  toast(fbConfigured?`${name} saved to Firebase ✓`:`${name} added (connect Firebase to save permanently)`);
+  toast(`${name} added ✓`);
+  // 2. Sync to Firebase in the background — does NOT block UI
+  if(fbConfigured){
+    showLoading(true,'Syncing to Firebase...');
+    addProductToFirestore(np).then(saved=>{
+      const idx=products.findIndex(x=>x.id===np.id);
+      if(idx!==-1) products[idx]={...products[idx],...saved};
+      showLoading(false);
+      toast(`${name} saved to Firebase ✓`);
+    }).catch(()=>showLoading(false));
+  }
 };
 
-// ── OVERRIDE saveEdit ──
+// ── OVERRIDE saveEdit — update locally first, sync Firebase in background ──
 window.saveEdit = async function(){
   const id=parseInt(document.getElementById('eId').value)||editingId;
   const name=document.getElementById('eName').value.trim();
@@ -2533,9 +3015,20 @@ window.saveEdit = async function(){
   const idx=products.findIndex(x=>x.id===id||x.id===String(id));
   if(idx===-1){toast('Product not found');return;}
   const emojis={dress:'👗',palazzo:'👘',twopiece:'✨',top:'👚',crop:'🩱'};
-  const updated={...products[idx],name,price:parseInt(price),cat,bg:cat,emoji:emojis[cat]||products[idx].emoji,desc,photo:editPhotoData||products[idx].photo||null};
+  const updated={...products[idx],name,price:parseInt(price),cat,bg:cat,
+    emoji:emojis[cat]||products[idx].emoji,desc,
+    photo:editMediaType==='photo'?(editPhotoData||products[idx].photo||null):null,
+    video:editMediaType==='video'?(editVideoData||products[idx].video||null):null};
+  // 1. Update locally IMMEDIATELY
+  products[idx]=updated;
+  filtered=filtered.map(p=>p.id===id?updated:p);
+  closeEditModal();
+  renderInventory(); renderProducts(filtered);
+  toast(`${name} updated ✓`);
+  // 2. Sync to Firebase in background
   if(fbConfigured){
-    const newURL=await updateProductInFirestore(updated);
+    showLoading(true,'Syncing to Firebase...');
+    updateProductInFirestore(updated).then(newURL=>{
     if(newURL) updated.photo=newURL;
   }
   products[idx]=updated;
@@ -2627,6 +3120,158 @@ function checkDashPass(){
 
 // Lock dashboard when navigating away
 const _origShowPage = showPage;
+
+
+// ── ORDER TRACKING ──
+// Status steps definition
+const statusSteps = ['Order Placed','Being Made','Ready','Shipped','Delivered'];
+const statusMap = {
+  'pending':    {label:'Order Placed',  step:0, badge:'tsb-pending',    icon:'🛍️'},
+  'processing': {label:'Being Made',    step:1, badge:'tsb-processing',  icon:'✂️'},
+  'ready':      {label:'Ready',         step:2, badge:'tsb-ready',       icon:'📦'},
+  'shipped':    {label:'Shipped',       step:3, badge:'tsb-shipped',     icon:'🚚'},
+  'delivered':  {label:'Delivered',     step:4, badge:'tsb-delivered',   icon:'✅'},
+  'cancelled':  {label:'Cancelled',     step:-1,badge:'tsb-cancelled',   icon:'❌'},
+};
+
+function trackOrder(){
+  const ref = document.getElementById('trackInput').value.trim().toUpperCase();
+  const result = document.getElementById('trackResult');
+  if(!ref){ result.innerHTML=''; return; }
+
+  // Show loading state
+  result.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-size:14px">🔍 Searching...</div>';
+
+  // Search Firestore first if connected
+  if(db && fbConfigured){
+    db.collection('orders').where('ref','==',ref).limit(1).get()
+      .then(snap=>{
+        if(!snap.empty){
+          const o={...snap.docs[0].data(), id:snap.docs[0].id};
+          renderTrackResult(ref,{
+            id:o.ref||ref, customer:o.name||'—', phone:o.phone||'',
+            address:o.addr||'', amount:'GH₵'+(o.total||'—'),
+            status:o.status||'processing',
+            date:o.createdAt?.toDate?o.createdAt.toDate().toLocaleDateString('en-GH',{day:'numeric',month:'short',year:'numeric'}):'—',
+            items:o.items?o.items.map(i=>`${i.name} (Size ${i.size}, ${i.color}) ×${i.qty}`).join(', '):'',
+            note:o.note||''
+          });
+        } else {
+          // Fallback to local search
+          searchLocalOrders(ref);
+        }
+      }).catch(()=>searchLocalOrders(ref));
+    return;
+  }
+  searchLocalOrders(ref);
+}
+
+function searchLocalOrders(ref){
+  const result = document.getElementById('trackResult');
+  let found = null;
+
+  // Check lastOrder if it matches
+  if(lastOrder && lastOrder.ref && lastOrder.ref.toUpperCase()===ref){
+    found = {
+      id: lastOrder.ref,
+      customer: lastOrder.name,
+      phone: lastOrder.phone,
+      address: lastOrder.addr,
+      amount: 'GH₵'+lastOrder.total,
+      status: 'processing',
+      date: new Date().toLocaleDateString('en-GH',{day:'numeric',month:'short',year:'numeric'}),
+      items: lastOrder.snapCart ? lastOrder.snapCart.map(i=>`${i.emoji} ${i.name} (Size ${i.size}, ${i.color}) ×${i.qty}`).join(', ') : '',
+      note: lastOrder.note || ''
+    };
+  }
+
+  // Check sampleOrders
+  if(!found){
+    const s = sampleOrders.find(o=>o.id.toUpperCase()===ref);
+    if(s) found = {...s, phone:'', address:'Accra, Ghana', items:'', note:''};
+  }
+
+  renderTrackResult(ref, found);
+}
+
+function renderTrackResult(ref, found){
+  const result = document.getElementById('trackResult');
+  if(!found){
+    // Not found
+    result.innerHTML=`
+      <div class="track-result">
+        <div class="track-notfound">
+          <div class="nf-icon">🔍</div>
+          <h3>Order Not Found</h3>
+          <p>We couldn't find an order with reference <strong>${ref}</strong>.<br>
+          Please check the reference and try again, or contact us on WhatsApp with your order reference.</p>
+          <button class="track-wa-btn" onclick="openWA('Hi! I want to track my order ${ref}')">
+            💬 Ask on WhatsApp
+          </button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const st = statusMap[found.status] || statusMap['pending'];
+  const isCancelled = found.status === 'cancelled';
+
+  // Build progress steps
+  let stepsHTML = statusSteps.map((label, i) => {
+    let dotClass = '', labelClass = '';
+    if(isCancelled){
+      dotClass = i===0 ? 'done' : i===1 ? 'cancelled' : '';
+      labelClass = i===1 ? 'cancelled' : i===0 ? 'done' : '';
+    } else {
+      dotClass = i < st.step ? 'done' : i === st.step ? 'active' : '';
+      labelClass = i < st.step ? 'done' : i === st.step ? 'active' : '';
+    }
+    const icons = ['🛍️','✂️','📦','🚚','✅'];
+    return `<div class="track-step">
+      <div class="ts-dot ${dotClass}">${dotClass==='done'?'✓':dotClass==='active'||dotClass==='cancelled'?icons[i]:i+1}</div>
+      <div class="ts-label ${labelClass}">${label}</div>
+    </div>`;
+  }).join('');
+
+  // Estimated delivery message
+  const deliveryMsg = isCancelled ? '❌ This order was cancelled' :
+    st.step === 4 ? '✅ Delivered successfully' :
+    st.step === 3 ? '🚚 On the way — arriving in 1–2 days' :
+    st.step === 2 ? '📦 Ready for pickup/dispatch' :
+    st.step === 1 ? '✂️ Being handcrafted — 2–4 more days' :
+    '🛍️ Order confirmed — crafting starts soon';
+
+  result.innerHTML=`
+    <div class="track-result">
+      <div class="track-result-hd">
+        <div>
+          <div class="track-ref">${found.id}</div>
+          <div class="track-date">Placed: ${found.date}</div>
+        </div>
+        <span class="track-status-badge ${st.badge}">${st.icon} ${st.label}</span>
+      </div>
+      <div class="track-steps">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">${deliveryMsg}</div>
+        <div class="track-steps-row">${stepsHTML}</div>
+      </div>
+      <div class="track-details">
+        <div class="td-row"><span class="td-key">Customer</span><span class="td-val">${found.customer}</span></div>
+        ${found.address?`<div class="td-row"><span class="td-key">Delivery Address</span><span class="td-val">${found.address}</span></div>`:''}
+        <div class="td-row"><span class="td-key">Amount Paid</span><span class="td-val">${found.amount}</span></div>
+        ${found.items?`<div class="td-row"><span class="td-key">Items</span><span class="td-val" style="text-align:right;max-width:300px">${found.items}</span></div>`:''}
+        ${found.note?`<div class="td-row"><span class="td-key">Note</span><span class="td-val">${found.note}</span></div>`:''}
+        <div class="td-row"><span class="td-key">Delivery</span><span class="td-val">4–6 working days</span></div>
+      </div>
+      <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap">
+        <button class="track-wa-btn" style="flex:1;justify-content:center" onclick="openWA('Hi! Checking on my order ${found.id}')">
+          💬 WhatsApp for Update
+        </button>
+        <button onclick="showPage('shop')" style="flex:1;background:var(--warm);color:var(--charcoal);border:1px solid var(--border);padding:12px 20px;border-radius:6px;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer">
+          ← Continue Shopping
+        </button>
+      </div>
+    </div>`;
+}
 
 // ── COLOUR PICKER ──
 const colorGroups = [
