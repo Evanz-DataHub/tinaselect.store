@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- PWA — Install as App -->
+<meta name="theme-color" content="#1E1A16">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TinaSelect">
+<meta name="application-name" content="TinaSelect">
+<meta name="description" content="Handmade fashion crafted with love in Accra, Ghana. Shop dresses, tops, palazzo trousers & more.">
+<link rel="manifest" href="manifest.json">
+<!-- Apple touch icons (inline SVG-based) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%231E1A16'/%3E%3Ctext x='256' y='320' font-size='260' text-anchor='middle' fill='%23C4706A' font-family='Georgia,serif' font-style='italic'%3ET%3C/text%3E%3C/svg%3E">
+
 <title>TinaSelect — Handmade Fashion</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://js.paystack.co/v1/inline.js"></script>
@@ -424,18 +437,142 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--charcoal);color:var(--ivory);padding:12px 24px;border-radius:4px;font-size:14px;z-index:999;transition:transform .3s;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
+/* ── MOBILE — up to 768px ── */
 @media(max-width:768px){
-  .hero{grid-template-columns:1fr;gap:30px;padding:52px 5%;}
+  /* Hero */
+  .hero{grid-template-columns:1fr;gap:24px;padding:40px 4%;}
+  .hero h1{font-size:32px;}
+  .hero p{font-size:14px;}
   .hero-mosaic{display:none;}
-  .dgrid{grid-template-columns:1fr;}
-  .fgrid{grid-template-columns:1fr;gap:24px;}
-  .pgrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
-  .pimg{height:180px;}
+  .hbtns{gap:10px;}
+  .btn-fill,.btn-ghost{padding:12px 20px;font-size:13px;}
+  .hstats{gap:24px;margin-top:28px;padding-top:24px;}
+  .sv{font-size:26px;}
+
+  /* Nav */
+  nav{padding:0 4%;height:58px;}
+  .logo{font-size:22px;}
+  .nav-right{gap:12px;}
+  .nav-link{font-size:13px;}
+  .cart-btn{padding:7px 14px;font-size:12px;}
+
+  /* Trust strip */
+  .trust{padding:18px 4%;gap:12px;}
+  .ti-title{font-size:12px;}
+  .ti-desc{font-size:11px;}
+
+  /* Categories */
+  .cat-sec{padding:28px 4% 12px;}
+  .chip{padding:7px 16px;font-size:12px;}
+
+  /* Products grid — 2 columns on mobile */
+  .prods-sec{padding:14px 4% 50px;}
+  .pgrid{grid-template-columns:1fr 1fr;gap:12px;}
+  .pcard{border-radius:8px;}
+  .pimg{height:190px;font-size:48px;}
+  .pinfo{padding:10px 10px 12px;}
+  .pname{font-size:13px;margin-bottom:2px;}
+  .pcat{font-size:10px;margin-bottom:6px;}
+  .pprice{font-size:17px;}
+  .atc{padding:7px 10px;font-size:11px;}
+  .cdots{gap:3px;margin-bottom:8px;}
+  .cdot{width:11px;height:11px;}
+
+  /* Toolbar */
+  .toolbar{flex-direction:column;gap:10px;margin-bottom:16px;}
+  .sbox{max-width:100%;width:100%;}
+  .ssel{width:100%;}
+
+  /* Detail page */
+  .dpage{padding:20px 4%;}
+  .dgrid{grid-template-columns:1fr;gap:24px;}
+  .dimain{height:320px;font-size:80px;}
+  .dname{font-size:26px;}
+  .dprice{font-size:30px;}
+  .ddesc{font-size:13px;}
+  .dbtns{flex-direction:column;gap:10px;}
+  .datc,.dbuy{padding:14px;font-size:14px;}
+  .dwa{padding:14px;}
+  .dthumbs{gap:8px;}
+  .dthumb{width:60px;height:60px;font-size:22px;}
+
+  /* Variant section */
+  .variant-sec{padding:14px;}
+  .vqty-row{flex-wrap:wrap;gap:8px;}
+  .vsel-summary{width:100%;font-size:12px;}
+  .vadd-btn{width:100%;padding:12px;}
+  .size-checks{gap:6px;}
+  .size-check-item label{width:40px;height:40px;font-size:12px;}
+  .color-multi-grid{gap:6px;}
+  .cmatch .cdot2{width:26px;height:26px;}
+  .cmatch span{font-size:8px;}
+
+  /* Cart sidebar */
+  .cs{width:100vw;}
+  .ci{gap:10px;}
+  .ci-img{width:56px;height:56px;font-size:24px;}
+  .ci-name{font-size:13px;}
+  .ci-meta{font-size:10px;}
+
+  /* Checkout modal */
+  .modal{border-radius:12px 12px 0 0;margin-top:auto;}
+  .mo{align-items:flex-end;padding:0;}
+  .mbody{padding:18px 20px;}
+  .mhd{padding:18px 20px 14px;}
+  .frow2{grid-template-columns:1fr;}
+  .net-opts{grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .no{padding:10px 6px;}
+  .ni{font-size:18px;}
+  .nn{font-size:11px;}
+
+  /* Success screen */
+  .suc-box{padding:20px 16px;}
+  .suc-icon{font-size:52px;}
+  .suc-title{font-size:24px;}
+
+  /* Footer */
+  .fgrid{grid-template-columns:1fr;gap:20px;}
+  footer{padding:32px 4% 20px;}
+
+  /* Dashboard */
+  .dhd{padding:20px 4%;flex-direction:column;align-items:flex-start;}
+  .dnav{width:100%;overflow-x:auto;}
+  .dnbtn{padding:8px 14px;font-size:12px;white-space:nowrap;}
+  .dbody{padding:20px 4%;}
+  .kgrid{grid-template-columns:1fr 1fr;gap:10px;}
+  .kpi{padding:14px;}
+  .kval{font-size:26px;}
+  .agrid{grid-template-columns:1fr;}
+  .mgrid,.frow2{grid-template-columns:1fr;}
+  .igrid{grid-template-columns:1fr 1fr;gap:10px;}
   .othd,.otrow{grid-template-columns:80px 1fr 80px;}
   .othd>*:nth-child(4),.othd>*:nth-child(5),.otrow>*:nth-child(4),.otrow>*:nth-child(5){display:none;}
-  .agrid,.mgrid,.frow2{grid-template-columns:1fr;}
   .pmhd,.pmrow{grid-template-columns:100px 1fr 70px;}
   .pmhd>*:nth-child(4),.pmhd>*:nth-child(5),.pmrow>*:nth-child(4),.pmrow>*:nth-child(5){display:none;}
+
+  /* Lightbox */
+  .lb-img{height:300px;font-size:100px;}
+  .lb-name{font-size:18px;}
+
+  /* Edit modal */
+  .edit-modal{border-radius:12px 12px 0 0;margin-top:auto;}
+  .edit-overlay{align-items:flex-end;padding:0;}
+  .edit-body{padding:18px 20px;}
+
+  /* Install banner */
+  #installBanner{padding:12px 16px;gap:10px;}
+  #iosBanner{padding:14px 16px;}
+}
+
+/* ── SMALL PHONES — up to 380px ── */
+@media(max-width:380px){
+  .pgrid{grid-template-columns:1fr 1fr;gap:8px;}
+  .pimg{height:160px;font-size:40px;}
+  .pname{font-size:12px;}
+  .pprice{font-size:15px;}
+  .atc{padding:6px 8px;font-size:10px;}
+  .size-check-item label{width:36px;height:36px;font-size:11px;}
+  .kgrid{grid-template-columns:1fr;}
 }
 </style>
 
@@ -675,7 +812,6 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
   <div class="logo" onclick="showPage('shop')">Tina<span>Select</span></div>
   <div class="nav-right">
     <button class="nav-link" onclick="showPage('shop')">Shop</button>
-    <button class="nav-link" onclick="showPage('dashboard')">Dashboard</button>
     <button class="cart-btn" onclick="openCart()">🛒 Cart <span class="cc" id="cartCount">0</span></button>
   </div>
 </nav>
@@ -775,7 +911,6 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
         <ul class="flist">
           <li onclick="openWA('Hi! I want to place a custom order')">Custom Orders</li>
           <li onclick="openWA('Hi! I need sizing help')">Size Guide</li>
-          <li onclick="showPage('dashboard')">Seller Dashboard</li>
           <li onclick="openWA('Hi! I need help')">Contact Us</li>
         </ul>
         <div class="fhead" style="margin-top:18px">Contact</div>
@@ -1165,6 +1300,47 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
       </div>
     </div>
   </div>
+</div>
+
+
+<!-- DASHBOARD LOGIN MODAL -->
+<div id="dashLoginOverlay" style="position:fixed;inset:0;background:rgba(30,26,22,.7);z-index:600;display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--ivory);border-radius:14px;width:min(400px,100%);padding:36px 32px;text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">🔒</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:6px">Seller Access</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px;font-weight:300">Owner access only</div>
+    <input type="password" id="dashPwInput" class="fi" placeholder="Enter password" 
+      style="text-align:center;letter-spacing:4px;font-size:18px;margin-bottom:8px"
+      onkeydown="if(event.key==='Enter')checkDashPass()">
+    <div id="dashPwError" style="font-size:12px;color:var(--rose-dk);margin-bottom:12px;display:none">❌ Incorrect password. Try again.</div>
+    <button onclick="checkDashPass()" style="width:100%;background:var(--charcoal);color:var(--ivory);border:none;padding:14px;border-radius:6px;font-family:'Jost',sans-serif;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:10px">Enter Dashboard</button>
+    <button onclick="closeDashLogin()" style="width:100%;background:transparent;color:var(--muted);border:none;padding:10px;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer">Cancel</button>
+  </div>
+</div>
+
+
+<!-- Android/Chrome Install Banner -->
+<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:700;background:var(--charcoal);padding:14px 20px;align-items:center;gap:14px;box-shadow:0 -4px 20px rgba(0,0,0,.3);">
+  <div style="width:44px;height:44px;border-radius:10px;background:#1E1A16;border:1.5px solid var(--rose-dk);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--rose);font-style:italic">T</div>
+  <div style="flex:1">
+    <div style="font-size:14px;font-weight:500;color:var(--ivory)">Add TinaSelect to Home Screen</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:2px">Shop handmade fashion anytime, even offline</div>
+  </div>
+  <button onclick="installPWA()" style="background:var(--rose-dk);color:#fff;border:none;padding:9px 18px;border-radius:6px;font-family:'Jost',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">Install App</button>
+  <button onclick="dismissInstall()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;line-height:1">×</button>
+</div>
+
+<!-- iOS Safari Install Banner -->
+<div id="iosBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:700;background:var(--charcoal);padding:16px 20px;align-items:flex-start;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);">
+  <div style="flex:1">
+    <div style="font-size:14px;font-weight:500;color:var(--ivory);margin-bottom:6px">📲 Add TinaSelect to your Home Screen</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.8">
+      1. Tap the <strong style="color:var(--ivory)">Share</strong> button <span style="font-size:16px">⎋</span> at the bottom of your browser<br>
+      2. Scroll down and tap <strong style="color:var(--ivory)">"Add to Home Screen"</strong><br>
+      3. Tap <strong style="color:var(--ivory)">"Add"</strong> — done! 🎉
+    </div>
+  </div>
+  <button onclick="dismissIOS()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0;line-height:1;flex-shrink:0">×</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -2305,6 +2481,76 @@ window.removeProduct = async function(id){
 };
 
 
+
+// ── DASHBOARD PASSWORD PROTECTION ──
+const DASH_PASSWORD = 'TinaSelect2025';
+let dashUnlocked = false;
+
+function openDashLogin(){
+  if(dashUnlocked){
+    showPage('dashboard');
+    return;
+  }
+  document.getElementById('dashLoginOverlay').style.display='flex';
+  document.getElementById('dashPwInput').value='';
+  document.getElementById('dashPwError').style.display='none';
+  setTimeout(()=>document.getElementById('dashPwInput').focus(),100);
+}
+
+// ── SECRET ACCESS METHODS (invisible to customers) ──
+// Method 1: Type the secret URL: yoursite.com/#admin
+window.addEventListener('hashchange',function(){
+  if(window.location.hash==='#admin') openDashLogin();
+});
+if(window.location.hash==='#admin') setTimeout(openDashLogin, 500);
+
+// Method 2: Secret keyboard shortcut — press Ctrl + Shift + A
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey && e.shiftKey && e.key==='A'){
+    e.preventDefault();
+    openDashLogin();
+  }
+});
+
+// Method 3: Tap the logo 5 times quickly on mobile
+let logoTaps=0, logoTimer=null;
+document.addEventListener('DOMContentLoaded',function(){
+  const logo=document.querySelector('.logo');
+  if(logo){
+    logo.addEventListener('click',function(){
+      logoTaps++;
+      clearTimeout(logoTimer);
+      if(logoTaps>=5){ logoTaps=0; openDashLogin(); }
+      logoTimer=setTimeout(()=>logoTaps=0, 2000);
+    });
+  }
+});
+
+function closeDashLogin(){
+  document.getElementById('dashLoginOverlay').style.display='none';
+}
+
+function checkDashPass(){
+  const entered = document.getElementById('dashPwInput').value;
+  if(entered === DASH_PASSWORD){
+    dashUnlocked = true;
+    closeDashLogin();
+    showPage('dashboard');
+    toast('Welcome back, Tina! 👑');
+  } else {
+    document.getElementById('dashPwError').style.display='block';
+    document.getElementById('dashPwInput').value='';
+    document.getElementById('dashPwInput').focus();
+    // Lock again after wrong attempt
+    setTimeout(()=>{
+      document.getElementById('dashPwError').style.display='none';
+    }, 3000);
+  }
+}
+
+// Lock dashboard when navigating away
+const _origShowPage = showPage;
+
 // ── COLOUR PICKER ──
 const colorGroups = [
   {label:'Neutrals & Whites', names:['White','Off White','Cream','Ivory','Beige','Champagne']},
@@ -2344,6 +2590,88 @@ function buildColorSwatchGrid(filter){
 }
 
 function filterColorList(v){renderColorPicker(v);}
+
+
+// ── PWA SERVICE WORKER & INSTALL PROMPT ──
+// Register service worker for offline support
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    // Inline service worker as blob
+    const swCode = `
+      const CACHE = 'tinaselect-v1';
+      const ASSETS = ['/tinaselect.store/', '/tinaselect.store/index.html'];
+      self.addEventListener('install', e => {
+        e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(()=>{})));
+        self.skipWaiting();
+      });
+      self.addEventListener('activate', e => {
+        e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+        self.clients.claim();
+      });
+      self.addEventListener('fetch', e => {
+        if(e.request.method !== 'GET') return;
+        e.respondWith(
+          fetch(e.request).catch(() => caches.match(e.request).then(r => r || caches.match('/tinaselect.store/')))
+        );
+      });
+    `;
+    const blob = new Blob([swCode], {type:'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).then(reg=>{
+      console.log('✅ TinaSelect PWA ready');
+    }).catch(e=>console.log('SW reg failed:', e));
+  });
+}
+
+// Install prompt — show banner when browser fires beforeinstallprompt
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner(){
+  // Don't show if already dismissed
+  if(localStorage.getItem('pwa_dismissed')) return;
+  const banner = document.getElementById('installBanner');
+  if(banner) banner.style.display = 'flex';
+}
+
+function installPWA(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(choice=>{
+    if(choice.outcome==='accepted'){
+      toast('TinaSelect added to your home screen! 🎉');
+      document.getElementById('installBanner').style.display='none';
+    }
+    deferredPrompt=null;
+  });
+}
+
+function dismissInstall(){
+  localStorage.setItem('pwa_dismissed','1');
+  document.getElementById('installBanner').style.display='none';
+}
+
+// iOS Safari — show manual instruction since iOS doesn't support beforeinstallprompt
+window.addEventListener('load', function(){
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isInApp = window.navigator.standalone;
+  const dismissed = localStorage.getItem('pwa_dismissed_ios');
+  if(isIOS && !isInApp && !dismissed){
+    setTimeout(()=>{
+      const banner = document.getElementById('iosBanner');
+      if(banner) banner.style.display='flex';
+    }, 3000);
+  }
+});
+
+function dismissIOS(){
+  localStorage.setItem('pwa_dismissed_ios','1');
+  document.getElementById('iosBanner').style.display='none';
+}
 
 // ── INIT ──
 function bootApp(){
