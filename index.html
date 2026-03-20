@@ -413,6 +413,16 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 .upload-zone .uz-hint{font-size:11px;color:var(--muted);margin-top:3px;}
 .img-preview{width:100%;height:120px;object-fit:cover;border-radius:6px;display:none;margin-bottom:6px;}
 .img-preview.show{display:block;}
+.vid-preview{width:100%;height:120px;object-fit:cover;border-radius:6px;display:none;margin-bottom:6px;background:#000;}
+.vid-preview.show{display:block;}
+.media-type-badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;margin-bottom:6px;}
+.mtb-photo{background:#DBEAFE;color:#1E40AF;}
+.mtb-video{background:#FEF3C7;color:#92400E;}
+/* Video play overlay on product card */
+.play-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;background:rgba(30,26,22,.65);border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.play-overlay::after{content:'';border-left:16px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px;}
+/* Lightbox video */
+.lb-video{width:100%;max-height:420px;border-radius:12px;display:block;background:#000;}
 .preview-wrap{position:relative;margin-bottom:4px;}
 .preview-rm{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 /* Edit Modal */
@@ -1077,14 +1087,16 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
           <div>
             <label class="fl">Product Photo</label>
             <div class="preview-wrap" id="addPreviewWrap" style="display:none">
-              <img class="img-preview show" id="addPreviewImg" src="" alt="">
-              <button class="preview-rm" onclick="clearAddPhoto()">×</button>
+              <span class="media-type-badge" id="addMediaBadge"></span>
+              <img class="img-preview" id="addPreviewImg" src="" alt="">
+              <video class="vid-preview" id="addPreviewVid" controls playsinline muted></video>
+              <button class="preview-rm" onclick="clearAddMedia('add')">×</button>
             </div>
             <div class="upload-zone" id="addUploadZone">
-              <input type="file" accept="image/*" onchange="handleAddPhoto(this)">
-              <div class="uz-icon">📷</div>
-              <div class="uz-txt">Click or drag photo here</div>
-              <div class="uz-hint">JPG, PNG, WEBP · Max 5MB</div>
+              <input type="file" accept="image/*,video/*" onchange="handleAddMedia(this,'add')">
+              <div class="uz-icon">📷🎬</div>
+              <div class="uz-txt">Click or drag photo or video here</div>
+              <div class="uz-hint">Photo: JPG, PNG, WEBP · Max 5MB<br>Video: MP4, MOV · Max 30MB</div>
             </div>
           </div>
         </div>
@@ -1281,14 +1293,16 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
         <div>
           <label class="fl">Product Photo</label>
           <div class="preview-wrap" id="editPreviewWrap">
-            <img class="img-preview show" id="editPreviewImg" src="" alt="">
-            <button class="preview-rm" onclick="clearEditPhoto()">×</button>
+            <span class="media-type-badge" id="editMediaBadge"></span>
+            <img class="img-preview" id="editPreviewImg" src="" alt="">
+            <video class="vid-preview" id="editPreviewVid" controls playsinline muted></video>
+            <button class="preview-rm" onclick="clearAddMedia('edit')">×</button>
           </div>
           <div class="upload-zone" id="editUploadZone" style="display:none">
-            <input type="file" accept="image/*" onchange="handleEditPhoto(this)">
-            <div class="uz-icon">📷</div>
-            <div class="uz-txt">Upload new photo</div>
-            <div class="uz-hint">JPG, PNG, WEBP · Max 5MB</div>
+            <input type="file" accept="image/*,video/*" onchange="handleAddMedia(this,'edit')">
+            <div class="uz-icon">📷🎬</div>
+            <div class="uz-txt">Upload new photo or video</div>
+            <div class="uz-hint">Photo: JPG PNG WEBP · Max 5MB<br>Video: MP4 MOV · Max 30MB</div>
           </div>
           <button style="width:100%;margin-top:8px;padding:8px;border:1px dashed var(--border);background:transparent;border-radius:5px;font-family:'Jost',sans-serif;font-size:12px;color:var(--muted);cursor:pointer" onclick="toggleEditUpload()">🔄 Change Photo</button>
         </div>
@@ -1450,9 +1464,11 @@ function renderProducts(list){
   if(!list.length){g.innerHTML='<p style="color:var(--muted);font-size:14px;grid-column:1/-1;padding:40px 0;text-align:center">No styles found.</p>';return;}
   g.innerHTML=list.map(p=>`
     <div class="pcard">
-      <div class="pimg ${p.bg}" style="${p.photo?'':'background:'+(bgMap[p.bg]||bgMap.basic)}" onclick="openLightboxById(${p.id})">
-        ${p.photo?`<img src="${p.photo}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0">`:`<span>${p.emoji}</span>`}
-        <span class="zoom-hint">🔍 Tap to view</span>
+      <div class="pimg ${p.bg}" style="${(p.photo||p.video)?'':'background:'+(bgMap[p.bg]||bgMap.basic)}" onclick="openLightboxById(${p.id})">
+        ${p.video?`<video src="${p.video}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0" muted playsinline loop autoplay></video><div class="play-overlay"></div>`
+          :p.photo?`<img src="${p.photo}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0">`
+          :`<span>${p.emoji}</span>`}
+        <span class="zoom-hint">${p.video?'▶ Tap to view':'🔍 Tap to view'}</span>
         <button class="wish-btn" onclick="event.stopPropagation();toggleWish(this,${p.id})" id="w${p.id}">🤍</button>
       </div>
       <div class="pinfo" onclick="openDetail(${p.id})" style="cursor:pointer">
@@ -1484,8 +1500,17 @@ function openLightboxById(id){
   if(!p) return;
   currentLbId=id;
   const lb=document.getElementById('lightbox');
-  if(p.photo){document.getElementById('lbImg').style.background='transparent';document.getElementById('lbImg').innerHTML=`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:10px">`;}
-  else{document.getElementById('lbImg').style.background=bgMap[p.bg]||bgMap.basic;document.getElementById('lbImg').innerHTML=`<span style="font-size:140px">${p.emoji}</span>`;}
+  const lbEl=document.getElementById('lbImg');
+  if(p.video){
+    lbEl.style.background='#000';
+    lbEl.innerHTML=`<video src="${p.video}" class="lb-video" controls autoplay playsinline style="width:100%;max-height:420px;border-radius:10px;display:block"></video>`;
+  } else if(p.photo){
+    lbEl.style.background='transparent';
+    lbEl.innerHTML=`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:10px">`;
+  } else {
+    lbEl.style.background=bgMap[p.bg]||bgMap.basic;
+    lbEl.innerHTML=`<span style="font-size:140px">${p.emoji}</span>`;
+  }
   document.getElementById('lbName').textContent=p.name;
   document.getElementById('lbPrice').textContent=`GH₵${p.price}`;
   lb.classList.add('open');
@@ -1501,8 +1526,16 @@ function openDetail(id){
   gaEvent('view_item',{currency:'GHS',value:p.price,items:[{item_id:p.id,item_name:p.name,item_category:p.cat,price:p.price}]});
   currentDetail=p; pendingVariants=[]; vQty=1;
   const dMain=document.getElementById('dImgMain');
-  if(p.photo){dMain.style.background='transparent';dMain.innerHTML=`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:10px"><div class="dimain-hint">🔍 Tap to zoom</div>`;}
-  else{dMain.style.background=bgMap[p.bg]||bgMap.basic;dMain.innerHTML=`<span style="font-size:110px">${p.emoji}</span><div class="dimain-hint">🔍 Tap to zoom</div>`;}
+  if(p.video){
+    dMain.style.background='#000';
+    dMain.innerHTML=`<video src="${p.video}" class="lb-video" controls playsinline autoplay muted loop style="width:100%;height:100%;object-fit:cover;border-radius:10px"></video><div class="dimain-hint">▶ Tap to play</div>`;
+  } else if(p.photo){
+    dMain.style.background='transparent';
+    dMain.innerHTML=`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:10px"><div class="dimain-hint">🔍 Tap to zoom</div>`;
+  } else {
+    dMain.style.background=bgMap[p.bg]||bgMap.basic;
+    dMain.innerHTML=`<span style="font-size:110px">${p.emoji}</span><div class="dimain-hint">🔍 Tap to zoom</div>`;
+  }
   document.getElementById('dThumbs').innerHTML=[p.photo||p.emoji,'📦','🏷️'].map((e,i)=>`<div class="dthumb ${i===0?'active':''}" style="background:${bgMap[p.bg]||bgMap.basic};overflow:hidden">${(i===0&&p.photo)?`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover">`:typeof e==='string'&&e.startsWith('data:')?`<img src="${e}" style="width:100%;height:100%;object-fit:cover">`:`<span>${e}</span>`}</div>`).join('');
   document.getElementById('dBadges').innerHTML=`<span class="dbadge db-rose">Handmade</span><span class="dbadge db-gold">Made to Order</span><span class="dbadge db-green">Delivery: 4–6 working days</span>`;
   document.getElementById('dName').textContent=p.name;
@@ -1962,8 +1995,12 @@ function renderOrders(){document.getElementById('ordersBody').innerHTML=sampleOr
 function renderInventory(){
   document.getElementById('invGrid').innerHTML=products.map(p=>`
     <div class="icard">
-      <div class="iimg ${p.photo?'has-photo':''}" style="${p.photo?'':'background:'+( bgMap[p.bg]||bgMap.basic)}">
-        ${p.photo?`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:44px">${p.emoji}</span>`}
+      <div class="iimg ${(p.photo||p.video)?'has-photo':''}" style="${(p.photo||p.video)?'background:#000':'background:'+(bgMap[p.bg]||bgMap.basic)}">
+        ${p.video
+          ?`<video src="${p.video}" style="width:100%;height:100%;object-fit:cover" muted autoplay playsinline loop></video>`
+          :p.photo
+          ?`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">`
+          :`<span style="font-size:44px">${p.emoji}</span>`}
       </div>
       <div class="iinfo">
         <div class="iname">${p.name}</div>
@@ -2006,46 +2043,64 @@ function addPromo(){
   renderPromoTable();toast(`Promo code ${code} created!`);
 }
 function removePromo(i){promoCodes.splice(i,1);renderPromoTable();toast('Promo code deleted');}
-let addPhotoData=null, editPhotoData=null, editingId=null, showEditUpload=false;
+let addPhotoData=null, addVideoData=null, addMediaType='photo';
+let editPhotoData=null, editVideoData=null, editMediaType='photo';
+let editingId=null, showEditUpload=false;
 
-function handleAddPhoto(input){
+function handleAddMedia(input, mode){
   const file=input.files[0];
   if(!file) return;
-  if(file.size>5*1024*1024){toast('Photo must be under 5MB');return;}
+  const isVideo=file.type.startsWith('video/');
+  const maxSize=isVideo?30*1024*1024:5*1024*1024;
+  const maxLabel=isVideo?'30MB':'5MB';
+  if(file.size>maxSize){toast(`${isVideo?'Video':'Photo'} must be under ${maxLabel}`);return;}
+
   const reader=new FileReader();
   reader.onload=e=>{
-    addPhotoData=e.target.result;
-    document.getElementById('addPreviewImg').src=addPhotoData;
-    document.getElementById('addPreviewWrap').style.display='block';
-    document.getElementById('addUploadZone').style.display='none';
+    const data=e.target.result;
+    const pfx=mode==='add'?'add':'edit';
+    const img=document.getElementById(pfx+'PreviewImg');
+    const vid=document.getElementById(pfx+'PreviewVid');
+    const badge=document.getElementById(pfx+'MediaBadge');
+    const wrap=document.getElementById(pfx+'PreviewWrap');
+    const zone=document.getElementById(pfx+'UploadZone');
+
+    if(isVideo){
+      if(mode==='add'){addVideoData=data;addPhotoData=null;addMediaType='video';}
+      else{editVideoData=data;editPhotoData=null;editMediaType='video';}
+      img.classList.remove('show'); img.src='';
+      vid.classList.add('show'); vid.src=data;
+      badge.textContent='🎬 Video'; badge.className='media-type-badge mtb-video';
+    } else {
+      if(mode==='add'){addPhotoData=data;addVideoData=null;addMediaType='photo';}
+      else{editPhotoData=data;editVideoData=null;editMediaType='photo';}
+      vid.classList.remove('show'); vid.src='';
+      img.classList.add('show'); img.src=data;
+      badge.textContent='📷 Photo'; badge.className='media-type-badge mtb-photo';
+    }
+    wrap.style.display='block';
+    zone.style.display='none';
   };
   reader.readAsDataURL(file);
 }
-function clearAddPhoto(){
-  addPhotoData=null;
-  document.getElementById('addPreviewImg').src='';
-  document.getElementById('addPreviewWrap').style.display='none';
-  document.getElementById('addUploadZone').style.display='block';
+
+function clearAddMedia(mode){
+  const pfx=mode==='add'?'add':'edit';
+  if(mode==='add'){addPhotoData=null;addVideoData=null;addMediaType='photo';}
+  else{editPhotoData=null;editVideoData=null;editMediaType='photo';}
+  const img=document.getElementById(pfx+'PreviewImg');
+  const vid=document.getElementById(pfx+'PreviewVid');
+  img.classList.remove('show'); img.src='';
+  vid.classList.remove('show'); vid.src='';
+  document.getElementById(pfx+'MediaBadge').textContent='';
+  document.getElementById(pfx+'PreviewWrap').style.display='none';
+  document.getElementById(pfx+'UploadZone').style.display='block';
 }
-function handleEditPhoto(input){
-  const file=input.files[0];
-  if(!file) return;
-  if(file.size>5*1024*1024){toast('Photo must be under 5MB');return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    editPhotoData=e.target.result;
-    document.getElementById('editPreviewImg').src=editPhotoData;
-    document.getElementById('editPreviewWrap').style.display='block';
-    document.getElementById('editUploadZone').style.display='none';
-  };
-  reader.readAsDataURL(file);
-}
-function clearEditPhoto(){
-  editPhotoData=null;
-  document.getElementById('editPreviewImg').src='';
-  document.getElementById('editPreviewWrap').style.display='none';
-  document.getElementById('editUploadZone').style.display='block';
-}
+
+// Keep old aliases for compatibility
+function clearAddPhoto(){clearAddMedia('add');}
+function clearEditPhoto(){clearAddMedia('edit');}
+
 function toggleEditUpload(){
   showEditUpload=!showEditUpload;
   document.getElementById('editUploadZone').style.display=showEditUpload?'block':'none';
@@ -2062,8 +2117,25 @@ function openEditModal(id){
   const prevImg=document.getElementById('editPreviewImg');
   const prevWrap=document.getElementById('editPreviewWrap');
   const upZone=document.getElementById('editUploadZone');
-  if(p.photo){prevImg.src=p.photo;prevWrap.style.display='block';upZone.style.display='none';}
-  else{prevImg.src='';prevWrap.style.display='none';upZone.style.display='block';}
+  const editVid=document.getElementById('editPreviewVid');
+  const editBadge=document.getElementById('editMediaBadge');
+  if(p.video){
+    editVideoData=p.video; editPhotoData=null; editMediaType='video';
+    prevImg.classList.remove('show'); prevImg.src='';
+    editVid.classList.add('show'); editVid.src=p.video;
+    editBadge.textContent='🎬 Video'; editBadge.className='media-type-badge mtb-video';
+    prevWrap.style.display='block'; upZone.style.display='none';
+  } else if(p.photo){
+    editPhotoData=p.photo; editVideoData=null; editMediaType='photo';
+    editVid.classList.remove('show'); editVid.src='';
+    prevImg.classList.add('show'); prevImg.src=p.photo;
+    editBadge.textContent='📷 Photo'; editBadge.className='media-type-badge mtb-photo';
+    prevWrap.style.display='block'; upZone.style.display='none';
+  } else {
+    prevImg.classList.remove('show'); prevImg.src='';
+    editVid.classList.remove('show'); editVid.src='';
+    editBadge.textContent=''; prevWrap.style.display='none'; upZone.style.display='block';
+  }
   document.getElementById('editOverlay').classList.add('open');
 }
 function closeEditModal(){
@@ -2080,7 +2152,9 @@ function saveEdit(){
   const idx=products.findIndex(x=>x.id===id);
   if(idx===-1){toast('Product not found');return;}
   const emojis={dress:'👗',palazzo:'👘',twopiece:'✨',top:'👚',crop:'🩱'};
-  products[idx]={...products[idx],name,price:parseInt(price),cat,bg:cat,emoji:emojis[cat]||products[idx].emoji,desc,photo:editPhotoData||products[idx].photo||null};
+  products[idx]={...products[idx],name,price:parseInt(price),cat,bg:cat,emoji:emojis[cat]||products[idx].emoji,desc,
+    photo:editMediaType==='photo'?(editPhotoData||products[idx].photo||null):null,
+    video:editMediaType==='video'?(editVideoData||products[idx].video||null):null};
   closeEditModal();
   renderInventory();
   if(filtered.find(x=>x.id===id)) renderProducts(filtered);
@@ -2103,7 +2177,10 @@ function addProduct(){
   const desc=document.getElementById('nDesc').value;
   if(!name||!price){toast('Please enter name and price');return;}
   const emojis={dress:'👗',palazzo:'👘',twopiece:'✨',top:'👚',crop:'🩱'};
-  products.push({id:Date.now(),name,cat,price:parseInt(price),emoji:emojis[cat]||'👗',bg:cat,desc,specs:{},photo:addPhotoData||null});
+  products.push({id:Date.now(),name,cat,price:parseInt(price),emoji:emojis[cat]||'👗',bg:cat,desc,specs:{},
+    photo:addMediaType==='photo'?addPhotoData:null,
+    video:addMediaType==='video'?addVideoData:null});
+  addPhotoData=null; addVideoData=null; addMediaType='photo';
   ['nName','nPrice','nDesc'].forEach(id=>{document.getElementById(id).value='';});
   clearAddPhoto();
   renderInventory();
