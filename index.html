@@ -904,14 +904,16 @@ let logoTapCount = 0, logoTapTimer = null;
 // LOCALSTORAGE — instant, always works
 // ══════════════════════════════════════
 function saveLocal() {
+  // Store photos directly in the products array — simple and reliable
   try {
-    const slim = products.map(p => ({...p, photo: p.photo && p.photo.startsWith('http') ? p.photo : null, video: p.video && p.video.startsWith('http') ? p.video : null}));
-    localStorage.setItem('ts_products', JSON.stringify(slim));
-    products.forEach(p => {
-      if (p.photo && p.photo.startsWith('data:')) { try { localStorage.setItem('ts_photo_' + p.id, p.photo); } catch(e){} }
-      if (p.video && p.video.startsWith('data:')) { try { localStorage.setItem('ts_video_' + p.id, p.video); } catch(e){} }
-    });
-  } catch(e) {}
+    localStorage.setItem('ts_products', JSON.stringify(products));
+  } catch(e) {
+    // If storage is full (very large photos), save without media as fallback
+    try {
+      const slim = products.map(p => ({...p, photo: null, video: null}));
+      localStorage.setItem('ts_products', JSON.stringify(slim));
+    } catch(e2) {}
+  }
 }
 
 function loadLocal() {
@@ -919,11 +921,7 @@ function loadLocal() {
     const raw = localStorage.getItem('ts_products');
     if (!raw) return;
     const saved = JSON.parse(raw);
-    if (!saved.length) return;
-    saved.forEach(sp => {
-      if (!sp.photo) sp.photo = localStorage.getItem('ts_photo_' + sp.id) || null;
-      if (!sp.video) sp.video = localStorage.getItem('ts_video_' + sp.id) || null;
-    });
+    if (!saved || !saved.length) return;
     products.length = 0;
     saved.forEach(p => products.push(p));
   } catch(e) {}
@@ -1014,8 +1012,10 @@ async function loadFromCloud() {
     const cloud = data.documents.map(doc => {
       const p = fromFS(doc);
       p.id = parseInt(p.id) || p._fsId;
-      if (!p.photo) p.photo = localStorage.getItem('ts_photo_' + p.id) || null;
-      if (!p.video) p.video = localStorage.getItem('ts_video_' + p.id) || null;
+      // Reattach locally stored photos (Firestore only stores compressed/http photos)
+      const localProduct = products.find(lp => String(lp.id) === String(p.id));
+      if (!p.photo && localProduct && localProduct.photo) p.photo = localProduct.photo;
+      if (!p.video && localProduct && localProduct.video) p.video = localProduct.video;
       return p;
     });
     products.length = 0;
