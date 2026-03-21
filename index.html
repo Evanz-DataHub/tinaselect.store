@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1E1A16">
 <title>TinaSelect — Handmade Fashion</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://js.paystack.co/v1/inline.js"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SNLEVR8ZSW"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-SNLEVR8ZSW');</script>
 <style>
@@ -157,6 +158,14 @@ nav{background:var(--charcoal);padding:0 5%;display:flex;align-items:center;just
 .spec-row:last-child{border-bottom:none;}
 .sk{color:var(--muted);font-weight:300;}.sv{font-weight:500;}
 .custom-note{background:var(--blush);border-left:3px solid var(--rose-dk);border-radius:0 6px 6px 0;padding:14px 16px;margin-top:16px;font-size:13px;color:var(--rose-deep);line-height:1.7;}
+.variant-item{display:flex;align-items:center;justify-content:space-between;background:var(--warm);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:13px;gap:10px;}
+.variant-item-left{flex:1;line-height:1.6;}
+.variant-item-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.variant-qty-ctrl{display:flex;align-items:center;gap:8px;}
+.variant-qty-ctrl button{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.variant-price{font-weight:500;color:var(--rose-dk);min-width:60px;text-align:right;}
+.variant-rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0;}
+.variant-rm:hover{color:var(--rose-dk);}
 .sold-out-detail{background:#FEE2E2;border-left:3px solid #991B1B;border-radius:0 6px 6px 0;padding:14px 16px;margin-top:12px;font-size:13px;color:#991B1B;}
 
 /* CART */
@@ -526,8 +535,22 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
             <button onclick="chDQty(1)">+</button>
           </div>
         </div>
+
+        <!-- Add to variant list -->
+        <button class="datc" id="dAddVariantBtn" onclick="addVariant()" style="width:100%;margin-bottom:14px">+ Add Size &amp; Colour to List</button>
+
+        <!-- Variant list -->
+        <div id="variantList" style="display:none;margin-bottom:16px">
+          <div style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Your Selections</div>
+          <div id="variantItems"></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;padding:10px 0 0;border-top:1px solid var(--border);margin-top:8px">
+            <span>Running Total</span>
+            <span id="variantTotal" style="color:var(--rose-dk);font-family:'Cormorant Garamond',serif;font-size:18px">GH₵0</span>
+          </div>
+        </div>
+
         <div class="dbtns">
-          <button class="datc" id="dAtcBtn" onclick="addDetailCart()">Add to Cart</button>
+          <button class="datc" id="dAtcBtn" onclick="addAllToCart()">🛍 Add All to Cart</button>
           <button class="dbuy" onclick="buyNow()">Buy Now</button>
           <button class="dwa" onclick="detailWA()">💬</button>
         </div>
@@ -868,6 +891,7 @@ let products = [
 let cart = [], filtered = [...products], activeCat = 'all';
 let detailQty = 1, currentDetail = null;
 let selSize = null, selColour = null;
+let detailVariants = []; // size+colour variants staged on detail page
 let discountPct = 0, appliedPromo = '';
 let dashUnlocked = false;
 let addMediaData = null, addMediaType = null;
@@ -1030,6 +1054,17 @@ function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   window.scrollTo(0, 0);
+
+  // Hide customer-facing UI on admin pages, show on customer pages
+  const isAdmin = page === 'dashboard' || page === 'dash-login';
+  const waFloat = document.querySelector('.wa-float');
+  const cartBtn = document.querySelector('.cart-btn');
+  if (waFloat) waFloat.style.display = isAdmin ? 'none' : 'flex';
+  if (cartBtn) cartBtn.style.display = isAdmin ? 'none' : 'flex';
+
+  // Clear any leftover customer toast when entering admin
+  if (isAdmin) { const t = document.getElementById('toast'); t.classList.remove('show'); }
+
   if (page === 'shop') renderProducts(filtered);
   if (page === 'dashboard') { renderDashKPIs(); renderInventory(); renderOrders(); renderTopItems(); }
 }
@@ -1126,6 +1161,11 @@ function openDetail(id) {
   document.getElementById('dQtyNum').textContent = 1;
   document.getElementById('colourSearch').value = '';
   document.getElementById('selColourName').textContent = 'No colour selected';
+  // Reset variant staging list for this new product
+  detailVariants = [];
+  renderVariantList();
+  detailVariants = [];
+  renderVariantList();
   document.getElementById('dSoldOutNote').style.display = p.inStock === false ? 'block' : 'none';
 
   // Image / video
@@ -1157,11 +1197,12 @@ function openDetail(id) {
   // Specs
   document.getElementById('dSpecs').innerHTML = Object.entries(p.specs || {}).map(([k, v]) => `<div class="spec-row"><span class="sk">${k}</span><span class="sv">${v}</span></div>`).join('');
 
-  // Add to cart button state
+  // Add All to Cart button — disabled until at least one variant is staged
   const atcBtn = document.getElementById('dAtcBtn');
-  atcBtn.textContent = 'Add to Cart';
+  atcBtn.textContent = '🛍 Add All to Cart';
   atcBtn.style.background = '';
-  atcBtn.disabled = p.inStock === false;
+  atcBtn.style.opacity = p.inStock === false ? '1' : '0.5';
+  atcBtn.disabled = p.inStock === false ? false : true; // enabled only after staging
 
   // Related
   const rel = products.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
@@ -1210,22 +1251,98 @@ function selSz(el, s) {
 
 function chDQty(d) { detailQty = Math.max(1, detailQty + d); document.getElementById('dQtyNum').textContent = detailQty; }
 
-function addDetailCart() {
+// ── VARIANT LIST (local to detail page) ──
+let detailVariants = []; // [{size, colour, qty, price}]
+
+function addVariant() {
   if (!currentDetail) return;
   if (currentDetail.inStock === false) { toast('This item is sold out'); return; }
-  const size = selSize ? String(selSize) : 'Unspecified';
-  const colour = selColour ? selColour.name : 'Unspecified';
-  addToCart(currentDetail.id, detailQty, size, colour);
+  if (!selSize) { toast('Please select a size'); return; }
+  if (!selColour) { toast('Please select a colour'); return; }
+  const key = selSize + '-' + selColour.name;
+  const ex = detailVariants.find(v => v.key === key);
+  if (ex) {
+    ex.qty += detailQty;
+    toast('Quantity updated in your list');
+  } else {
+    detailVariants.push({ key, size: String(selSize), colour: selColour.name, qty: detailQty, price: currentDetail.price });
+    toast('Added to your list ✓');
+  }
+  renderVariantList();
+  // Reset selectors for next pick
+  selSize = null; selColour = null; detailQty = 1;
+  document.getElementById('dQtyNum').textContent = 1;
+  document.querySelectorAll('.sz').forEach(x => x.classList.remove('sel'));
+  document.querySelectorAll('.cswatch').forEach(x => x.classList.remove('sel'));
+  document.getElementById('selColourName').textContent = 'No colour selected';
+  document.getElementById('colourSearch').value = '';
+  renderColours('');
+}
+
+function renderVariantList() {
+  const wrap = document.getElementById('variantList');
+  const itemsEl = document.getElementById('variantItems');
+  if (!detailVariants.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  itemsEl.innerHTML = detailVariants.map((v, i) => `
+    <div class="variant-item">
+      <div class="variant-item-left">
+        <strong>Size ${v.size}</strong> · ${v.colour}
+      </div>
+      <div class="variant-item-right">
+        <div class="variant-qty-ctrl">
+          <button onclick="changeVariantQty(${i},-1)">−</button>
+          <span>${v.qty}</span>
+          <button onclick="changeVariantQty(${i},1)">+</button>
+        </div>
+        <span class="variant-price">GH₵${v.price * v.qty}</span>
+        <button class="variant-rm" onclick="removeVariant(${i})">×</button>
+      </div>
+    </div>`).join('');
+  const total = detailVariants.reduce((s, v) => s + v.price * v.qty, 0);
+  document.getElementById('variantTotal').textContent = 'GH₵' + total;
+}
+
+function changeVariantQty(i, d) {
+  detailVariants[i].qty = Math.max(1, detailVariants[i].qty + d);
+  renderVariantList();
+}
+
+function removeVariant(i) {
+  detailVariants.splice(i, 1);
+  renderVariantList();
+}
+
+function addAllToCart() {
+  if (!currentDetail) return;
+  if (!detailVariants.length) { toast('Add at least one size & colour to your list first'); return; }
+  detailVariants.forEach(v => addToCart(currentDetail.id, v.qty, v.size, v.colour));
+  toast(detailVariants.length + ' variant(s) added to cart ✓');
+  detailVariants = [];
+  renderVariantList();
   const btn = document.getElementById('dAtcBtn');
-  btn.textContent = '✓ Added'; btn.style.background = 'var(--green)';
-  setTimeout(() => { btn.textContent = 'Add to Cart'; btn.style.background = ''; }, 2000);
+  btn.textContent = '✓ Added to Cart'; btn.style.background = 'var(--green)';
+  setTimeout(() => { btn.textContent = '🛍 Add All to Cart'; btn.style.background = ''; }, 2000);
 }
 
 function buyNow() {
   if (!currentDetail) return;
   if (currentDetail.inStock === false) { toast('This item is sold out'); return; }
-  addDetailCart();
-  setTimeout(() => { closeCart(); openCheckout(); }, 300);
+  // Require at least a size+colour selection or staged variants
+  let buyItems = [];
+  if (detailVariants.length) {
+    buyItems = detailVariants.map(v => ({...currentDetail, qty:v.qty, size:v.size, colour:v.colour, key:`buynow-${v.key}`}));
+  } else {
+    if (!selSize) { toast('Please select a size first'); return; }
+    if (!selColour) { toast('Please select a colour first'); return; }
+    buyItems = [{...currentDetail, qty:detailQty, size:String(selSize), colour:selColour.name, key:`buynow-${currentDetail.id}-${selSize}-${selColour.name}`}];
+  }
+  // Temporarily swap cart to buy-now items only, save original cart
+  window._savedCart = [...cart];
+  cart = buyItems;
+  updateCC();
+  window._buyNowMode = true;
+  openCheckout();
 }
 
 function detailWA() {
@@ -1340,8 +1457,25 @@ function openCheckout() {
   gtag('event', 'begin_checkout');
 }
 
-function closeCheckout() { document.getElementById('checkoutModal').classList.remove('open'); }
-function closeAll() { closeCheckout(); closeCart(); showPage('shop'); }
+function closeCheckout() {
+  document.getElementById('checkoutModal').classList.remove('open');
+  // If buy-now mode, restore the original cart
+  if (window._buyNowMode) {
+    cart = window._savedCart || [];
+    window._savedCart = [];
+    window._buyNowMode = false;
+    updateCC();
+  }
+}
+function closeAll() {
+  // On buy-now, _savedCart is already cleared in closeCheckout
+  // but we don't restore it here (order was placed successfully)
+  window._buyNowMode = false;
+  window._savedCart = [];
+  closeCheckout();
+  closeCart();
+  showPage('shop');
+}
 
 function renderOrderSummary(elId) {
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -1378,25 +1512,45 @@ function goStep2() {
 }
 
 function initiatePaystack() {
+  if (typeof PaystackPop === 'undefined') {
+    // Paystack SDK not yet loaded, load it now then retry
+    const s = document.createElement('script');
+    s.src = 'https://js.paystack.co/v1/inline.js';
+    s.onload = () => initiatePaystack();
+    document.head.appendChild(s);
+    return;
+  }
   const name = document.getElementById('cusName').value.trim();
   const phone = document.getElementById('cusPhone').value.trim();
   const email = document.getElementById('cusEmail').value.trim() || 'order@tinaselect.com';
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const disc = Math.round(sub * discountPct / 100);
-  const total = (sub - disc) * 100; // kobo/pesewas
+  const totalAmount = (sub - disc) * 100; // in pesewas
 
   const handler = PaystackPop.setup({
     key: PAYSTACK_KEY,
     email: email,
-    amount: total,
+    amount: totalAmount,
     currency: 'GHS',
     channels: ['mobile_money', 'card', 'bank_transfer'],
-    metadata: { custom_fields: [{display_name:'Customer Phone', variable_name:'phone', value:phone}] },
+    metadata: {
+      custom_fields: [
+        {display_name: 'Customer Name', variable_name: 'customer_name', value: name},
+        {display_name: 'Phone', variable_name: 'phone', value: phone}
+      ]
+    },
     callback: function(response) {
+      // Restore modal z-index after Paystack closes
+      document.getElementById('checkoutModal').style.zIndex = '300';
       confirmOrder(response.reference);
     },
-    onClose: function() { toast('Payment cancelled'); }
+    onClose: function() {
+      document.getElementById('checkoutModal').style.zIndex = '300';
+      toast('Payment window closed — tap Pay again to retry');
+    }
   });
+  // Lower checkout modal z-index so Paystack popup appears on top
+  document.getElementById('checkoutModal').style.zIndex = '50';
   handler.openIframe();
 }
 
@@ -1438,6 +1592,13 @@ function confirmOrder(ref) {
 
     cart = []; updateCC(); discountPct = 0; appliedPromo = '';
     document.getElementById('promoInput').value = '';
+    // If this was a buy-now, restore the main cart (order placed, no need to keep buy-now items)
+    if (window._buyNowMode) {
+      window._buyNowMode = false;
+      window._savedCart = [];
+    }
+    detailVariants = [];
+    renderVariantList();
   }, 2500);
 }
 
@@ -1475,7 +1636,7 @@ function checkDashPass() {
     document.getElementById('dashPwInput').value = '';
     showPage('dashboard');
   } else {
-    toast('Incorrect password');
+    adminToast('Incorrect password');
   }
 }
 
@@ -1573,7 +1734,7 @@ function addProduct() {
   const price = document.getElementById('nPrice').value;
   const cat = document.getElementById('nCat').value;
   const desc = document.getElementById('nDesc').value;
-  if (!name || !price) { toast('Please enter style name and price'); return; }
+  if (!name || !price) { adminToast('Please enter style name and price'); return; }
   const np = {
     id: Date.now(), name, cat, price: parseInt(price),
     emoji: catEmoji[cat] || '👗', desc, specs: {Type: catLabel[cat], Delivery: '4–6 working days'},
@@ -1640,9 +1801,9 @@ function saveEdit() {
   const price = document.getElementById('ePrice').value;
   const cat = document.getElementById('eCat').value;
   const desc = document.getElementById('eDesc').value.trim();
-  if (!name || !price) { toast('Please fill in name and price'); return; }
+  if (!name || !price) { adminToast('Please fill in name and price'); return; }
   const idx = products.findIndex(x => x.id === id);
-  if (idx === -1) { toast('Product not found'); return; }
+  if (idx === -1) { adminToast('Product not found'); return; }
   products[idx] = {
     ...products[idx], name, price: parseInt(price), cat,
     emoji: catEmoji[cat] || products[idx].emoji, desc,
@@ -1666,6 +1827,16 @@ function openWA(msg) {
 }
 
 function toast(msg) {
+  // Never show customer toast notifications on admin/login pages
+  const activePage = document.querySelector('.page.active');
+  if (activePage && (activePage.id === 'page-dashboard' || activePage.id === 'page-dash-login')) return;
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Admin-only toast for dashboard actions
+function adminToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2800);
@@ -1691,7 +1862,5 @@ function showSync(msg) {
 })();
 </script>
 
-<!-- Paystack SDK -->
-<script src="https://js.paystack.co/v1/inline.js"></script>
 </body>
 </html>
