@@ -119,11 +119,14 @@ nav{background:var(--charcoal);padding:0 5%;display:flex;align-items:center;just
 .sz{min-width:46px;height:44px;padding:0 8px;border-radius:4px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
 .sz:hover{border-color:var(--rose-dk);}
 .sz.sel{background:var(--charcoal);color:var(--ivory);border-color:var(--charcoal);}
-.colour-search-input{width:100%;border:1px solid var(--border);background:var(--card);border-radius:5px;padding:7px 12px;font-family:'Jost',sans-serif;font-size:13px;outline:none;margin-bottom:8px;}
-.colour-grid{display:flex;gap:8px;flex-wrap:wrap;max-height:120px;overflow-y:auto;padding:4px 0;}
-.cswatch{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .2s;flex-shrink:0;}
-.cswatch:hover{transform:scale(1.15);}
-.cswatch.sel{border-color:var(--charcoal);box-shadow:0 0 0 2px var(--ivory),0 0 0 4px var(--charcoal);}
+.colour-search-input{width:100%;border:1px solid var(--border);background:var(--card);border-radius:8px;padding:10px 14px;font-family:'Jost',sans-serif;font-size:14px;outline:none;margin-bottom:10px;transition:border-color .2s;}
+.colour-search-input:focus{border-color:var(--rose-dk);}
+.colour-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;max-height:220px;overflow-y:auto;padding:4px 2px;}
+.colour-grid::-webkit-scrollbar{width:4px;}.colour-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.cswatch{width:100%;aspect-ratio:1;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:all .2s;position:relative;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;}
+.cswatch:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);border-color:var(--muted);}
+.cswatch.sel{border-color:var(--charcoal);border-width:3px;box-shadow:0 0 0 2px var(--rose-dk);}
+.cswatch-label{font-size:9px;font-weight:500;background:rgba(0,0,0,.55);color:#fff;width:100%;text-align:center;padding:2px 2px;position:absolute;bottom:0;left:0;line-height:1.3;word-break:break-word;}
 .sel-colour-name{font-size:12px;color:var(--muted);margin-top:6px;min-height:18px;}
 .qty-row{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
 .qty-label{font-size:13px;color:var(--muted);font-weight:300;}
@@ -331,16 +334,76 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--charcoal);color:var(--ivory);padding:12px 24px;border-radius:4px;font-size:14px;z-index:999;transition:transform .3s;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 @media(max-width:768px){
-  .hero{grid-template-columns:1fr;gap:30px;padding:52px 5%;}.hero-mosaic{display:none;}
-  .dgrid{grid-template-columns:1fr;}
-  .fg-grid{grid-template-columns:1fr;gap:24px;}
-  .story-block,.story-block.rev{grid-template-columns:1fr;direction:ltr;}
-  .pgrid{grid-template-columns:repeat(2,1fr);gap:12px;}
-  .pimg{height:180px;font-size:40px;}
-  .ag,.mini-grid,.frow{grid-template-columns:1fr;}
+  /* NAV */
+  nav{padding:0 4%;height:60px;}
+  .logo{font-size:22px;}
   .nav-link{display:none;}
+  .cart-btn{padding:7px 14px;font-size:12px;}
+  /* HERO */
+  .hero{grid-template-columns:1fr;gap:20px;padding:44px 5% 40px;}.hero-mosaic{display:none;}
+  .hero h1{font-size:36px;}.hero p{font-size:14px;}
+  .hero-stats{gap:24px;}.stat-val{font-size:26px;}
+  .btn-fill,.btn-ghost{padding:12px 22px;font-size:13px;}
+  /* PRODUCTS GRID */
+  .pgrid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .pimg{height:190px;font-size:38px;}
+  .pname{font-size:13px;}
+  .pprice{font-size:17px;}
+  .atc{padding:7px 12px;font-size:11px;}
+  /* DETAIL PAGE */
+  .detail-page{padding:24px 4%;}
+  .dgrid{grid-template-columns:1fr;gap:24px;}
+  .dimain{height:320px;font-size:80px;}
+  .dname{font-size:26px;}
+  .dprice{font-size:30px;}
+  .ddesc{font-size:13px;}
+  .dbtns{flex-direction:column;}
+  .datc,.dbuy{width:100%;padding:14px;}
+  .dwa{width:100%;padding:14px;text-align:center;}
+  /* SIZES — bigger tap targets */
+  .sz{min-width:52px;height:52px;font-size:15px;}
+  /* COLOUR GRID — 4 cols on mobile */
+  .colour-grid{grid-template-columns:repeat(4,1fr);max-height:200px;}
+  .cswatch-label{font-size:8px;}
+  /* CART */
+  .cart-sidebar{width:100vw;}
+  .ch{padding:18px 20px;}
+  .citems{padding:14px 20px;}
+  .cfooter{padding:14px 20px;}
+  /* CHECKOUT */
+  .modal{border-radius:16px 16px 0 0;position:fixed;bottom:0;left:0;right:0;width:100%;max-height:92vh;}
+  .mo{align-items:flex-end;padding:0;}
+  .mbody{padding:20px;}
+  .frow{grid-template-columns:1fr;}
+  /* DASHBOARD */
+  .dash-hd{padding:20px 4%;}
+  .dash-nav{gap:2px;}
+  .dn-btn{padding:6px 12px;font-size:11px;}
+  .dash-body{padding:20px 4%;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .kpi{padding:14px;}
+  .kpi-val{font-size:24px;}
+  .ag{grid-template-columns:1fr;}
+  .mini-grid{grid-template-columns:1fr;}
+  .inv-grid{grid-template-columns:repeat(2,1fr);}
+  /* STORY */
+  .story-block,.story-block.rev{grid-template-columns:1fr;direction:ltr;}
+  .story-img{height:240px;}
+  .story-h2{font-size:26px;}
+  .fg-grid{grid-template-columns:1fr;gap:24px;}
+  /* ORDERS TABLE */
+  .ot-hd,.ot-row{grid-template-columns:90px 1fr 80px;min-width:unset;}
+  .ot-hd>*:nth-child(4),.ot-hd>*:nth-child(5),
+  .ot-row>*:nth-child(4),.ot-row>*:nth-child(5){display:none;}
 }
-@media(max-width:400px){.pgrid{grid-template-columns:1fr;}}
+@media(max-width:420px){
+  .pgrid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .pimg{height:160px;}
+  .colour-grid{grid-template-columns:repeat(4,1fr);}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .hero-stats{flex-direction:column;gap:12px;}
+  .sz{min-width:48px;height:48px;}
+}
 </style>
 <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
@@ -563,6 +626,17 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
   </div>
   <div class="dash-body">
     <div id="dash-overview">
+      <div id="syncSetupBanner" style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:10px;padding:18px 20px;margin-bottom:24px;display:none">
+        <div style="font-size:15px;font-weight:500;color:#92400E;margin-bottom:8px">⚠️ Customer sync not set up yet</div>
+        <div style="font-size:13px;color:#92400E;line-height:1.8">
+          Customers cannot yet see your product updates. To enable it:<br>
+          1. Go to <a href="https://jsonbin.io" target="_blank" style="color:#B45309;font-weight:500">jsonbin.io</a> → Sign up free → Click <strong>Create Bin</strong> → paste <code style="background:#FDE68A;padding:1px 5px;border-radius:3px">{}</code> → Save<br>
+          2. Copy your <strong>BIN ID</strong> (looks like: 65f3a...)<br>
+          3. Go to your Account → <strong>API Keys</strong> → copy your Master Key<br>
+          4. Open the store HTML file, find <code style="background:#FDE68A;padding:1px 5px;border-radius:3px">JSONBIN_BIN_ID</code> and <code style="background:#FDE68A;padding:1px 5px;border-radius:3px">JSONBIN_KEY</code> and paste your values<br>
+          5. Re-upload the file to GitHub Pages — done! ✓
+        </div>
+      </div>
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-val" id="kpiRevenue">GH₵0</div><div class="kpi-ch up">All orders</div></div>
         <div class="kpi"><div class="kpi-label">Orders</div><div class="kpi-val" id="kpiOrders">0</div><div class="kpi-ch up">Total placed</div></div>
@@ -718,27 +792,52 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 const PHONE = '233540250468';
 const PAYSTACK_KEY = 'pk_live_3201eb66302433f902812dc8b6b5f480529eed67';
 const DASH_PASSWORD = 'Tina@68';
-const FB_PROJECT = 'tinaselect-store';
-const FS_BASE = 'https://firestore.googleapis.com/v1/projects/' + FB_PROJECT + '/databases/(default)/documents';
+// JSONBin.io — free public cloud sync. No login needed by customers.
+// HOW IT WORKS: Admin saves → data goes to JSONBin → customers fetch it on load.
+// To set up your own bin: go to jsonbin.io, create a free account,
+// create a bin with {} as content, copy the BIN_ID below.
+const JSONBIN_BIN_ID = '69bfcb68aa77b81da909a2b8';
+const JSONBIN_KEY = '$2a$10$9IfrcvJQvFM9CDLk5Vn7C.0jeMGUkpygX0VqffZCbIecypliL0Ima';
+const JSONBIN_ACCESS_KEY = '$2a$10$nyUPcg1OgqdOXPRu0ORNwu5k49fpS5gR0OjwHZ6lK7KAFAG0rW.nu';
+const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
 const PROMOS = { TINA10:10, TINA20:20, NEWCUST:15 };
 const SIZES = [6,8,10,12,14,16,18,20];
 const BGS = { dress:'linear-gradient(160deg,#F9EDE8,#F0D5CC)', palazzo:'linear-gradient(160deg,#EDE8F9,#D5CCF0)', twopiece:'linear-gradient(160deg,#E8F9ED,#CCF0D9)', top:'linear-gradient(160deg,#F5EFE6,#E8DDD4)', crop:'linear-gradient(160deg,#FFF0E8,#F0D4C4)' };
 const EMOJIS = { dress:'👗', palazzo:'👘', twopiece:'✨', top:'👚', crop:'🩱' };
 const LABELS = { dress:'Handmade Dress', palazzo:'Palazzo Trousers', twopiece:'Two Piece Combo', top:'Top', crop:'Crop Top' };
 const COLOURS = [
-  {n:'Black',h:'#1A1A1A'},{n:'White',h:'#F5F5F5'},{n:'Ivory',h:'#FFFFF0'},{n:'Cream',h:'#FFFDD0'},
-  {n:'Beige',h:'#F5F5DC'},{n:'Champagne',h:'#F7E7CE'},{n:'Gold',h:'#FFD700'},{n:'Rose Gold',h:'#B76E79'},
-  {n:'Silver',h:'#C0C0C0'},{n:'Blush',h:'#FFB6C1'},{n:'Dusty Rose',h:'#DCAE96'},{n:'Coral',h:'#FF7F6B'},
-  {n:'Red',h:'#DC143C'},{n:'Burgundy',h:'#800020'},{n:'Maroon',h:'#800000'},{n:'Wine',h:'#722F37'},
-  {n:'Peach',h:'#FFCBA4'},{n:'Orange',h:'#FF6B35'},{n:'Mustard',h:'#FFDB58'},{n:'Yellow',h:'#FFE135'},
-  {n:'Lime',h:'#BAD531'},{n:'Mint',h:'#98FF98'},{n:'Sage',h:'#9DC183'},{n:'Green',h:'#228B22'},
-  {n:'Olive',h:'#808000'},{n:'Forest Green',h:'#014421'},{n:'Teal',h:'#008080'},{n:'Turquoise',h:'#40E0D0'},
-  {n:'Sky Blue',h:'#87CEEB'},{n:'Baby Blue',h:'#89CFF0'},{n:'Royal Blue',h:'#4169E1'},{n:'Navy',h:'#001F5B'},
-  {n:'Denim',h:'#1560BD'},{n:'Cobalt',h:'#0047AB'},{n:'Lavender',h:'#E6E6FA'},{n:'Lilac',h:'#C8A2C8'},
-  {n:'Purple',h:'#800080'},{n:'Plum',h:'#8E4585'},{n:'Mauve',h:'#E0B0FF'},{n:'Brown',h:'#8B4513'},
-  {n:'Tan',h:'#D2B48C'},{n:'Camel',h:'#C19A6B'},{n:'Chocolate',h:'#7B3F00'},{n:'Ash Grey',h:'#B2BEB5'},
-  {n:'Grey',h:'#808080'},{n:'Charcoal',h:'#36454F'},{n:'Ankara Print',h:'#E8522A'},{n:'Kente Gold',h:'#D4AF37'},
-  {n:'Kente Multi',h:'#C8A000'},{n:'Multi-colour',h:'#FF6B35'}
+  // Neutrals
+  {n:'White',h:'#FFFFFF'},{n:'Off White',h:'#FAF9F6'},{n:'Ivory',h:'#FFFFF0'},{n:'Cream',h:'#FFFDD0'},
+  {n:'Beige',h:'#F5F5DC'},{n:'Nude',h:'#E8C9A0'},{n:'Champagne',h:'#F7E7CE'},{n:'Linen',h:'#FAF0E6'},
+  // Blacks & Greys
+  {n:'Black',h:'#000000'},{n:'Charcoal',h:'#36454F'},{n:'Dark Grey',h:'#555555'},{n:'Grey',h:'#808080'},
+  {n:'Ash Grey',h:'#B2BEB5'},{n:'Silver',h:'#C0C0C0'},{n:'Light Grey',h:'#D3D3D3'},
+  // Pinks & Roses
+  {n:'Blush',h:'#FFB6C1'},{n:'Baby Pink',h:'#F4C2C2'},{n:'Dusty Rose',h:'#DCAE96'},{n:'Rose',h:'#FF007F'},
+  {n:'Hot Pink',h:'#FF69B4'},{n:'Fuchsia',h:'#FF00FF'},{n:'Magenta',h:'#CC0066'},{n:'Rose Gold',h:'#B76E79'},
+  // Reds
+  {n:'Light Red',h:'#FF6B6B'},{n:'Red',h:'#DC143C'},{n:'Cherry Red',h:'#9B1B30'},{n:'Burgundy',h:'#800020'},
+  {n:'Maroon',h:'#800000'},{n:'Wine',h:'#722F37'},{n:'Rust',h:'#B7410E'},
+  // Oranges & Yellows
+  {n:'Peach',h:'#FFCBA4'},{n:'Coral',h:'#FF6B6B'},{n:'Orange',h:'#FF6B35'},{n:'Burnt Orange',h:'#CC5500'},
+  {n:'Yellow',h:'#FFE135'},{n:'Mustard',h:'#FFDB58'},{n:'Golden Yellow',h:'#FFC200'},{n:'Gold',h:'#FFD700'},
+  // Greens
+  {n:'Mint',h:'#98FF98'},{n:'Lime',h:'#BAD531'},{n:'Sage',h:'#9DC183'},{n:'Green',h:'#228B22'},
+  {n:'Emerald',h:'#50C878'},{n:'Olive',h:'#808000'},{n:'Forest Green',h:'#014421'},{n:'Bottle Green',h:'#006A4E'},
+  // Blues
+  {n:'Baby Blue',h:'#89CFF0'},{n:'Sky Blue',h:'#87CEEB'},{n:'Powder Blue',h:'#B0E0E6'},{n:'Teal',h:'#008080'},
+  {n:'Turquoise',h:'#40E0D0'},{n:'Cobalt',h:'#0047AB'},{n:'Royal Blue',h:'#4169E1'},{n:'Navy',h:'#001F5B'},
+  {n:'Denim',h:'#1560BD'},{n:'Midnight Blue',h:'#191970'},
+  // Purples
+  {n:'Lavender',h:'#E6E6FA'},{n:'Lilac',h:'#C8A2C8'},{n:'Mauve',h:'#E0B0FF'},{n:'Purple',h:'#800080'},
+  {n:'Violet',h:'#7F00FF'},{n:'Plum',h:'#8E4585'},{n:'Amethyst',h:'#9966CC'},
+  // Browns
+  {n:'Tan',h:'#D2B48C'},{n:'Camel',h:'#C19A6B'},{n:'Brown',h:'#8B4513'},{n:'Chocolate',h:'#7B3F00'},
+  {n:'Coffee',h:'#6F4E37'},{n:'Mocha',h:'#967117'},
+  // Metallics & Specials
+  {n:'Champagne Gold',h:'#F0D060'},{n:'Ankara Print',h:'#E8522A'},{n:'Kente Gold',h:'#D4AF37'},
+  {n:'Kente Multi',h:'#C8A000'},{n:'Tie-Dye',h:'#9B59B6'},{n:'Multi-colour',h:'#FF6B35'},
+  {n:'Printed',h:'#E8522A'},{n:'Floral Print',h:'#E8A598'}
 ];
 
 // ═══════════════════════════════════════════════
@@ -836,39 +935,96 @@ function loadOrders() {
 // ═══════════════════════════════════════════════
 // CLOUD (Firestore REST — background sync)
 // ═══════════════════════════════════════════════
-function toFS(obj) {
-  const fields = {};
-  Object.entries(obj).forEach(([k,v]) => {
-    if (v===null||v===undefined) fields[k]={nullValue:null};
-    else if (typeof v==='boolean') fields[k]={booleanValue:v};
-    else if (typeof v==='number') fields[k]=Number.isInteger(v)?{integerValue:String(v)}:{doubleValue:v};
-    else if (typeof v==='string') fields[k]={stringValue:v};
-    else if (typeof v==='object'&&!Array.isArray(v)) fields[k]={mapValue:{fields:toFS(v).fields||{}}};
-  });
-  return {fields};
+// ═══════════════════════════════════════════════
+// CLOUD SYNC via JSONBin.io
+// Simple, free, works instantly — no Firebase setup needed
+// ═══════════════════════════════════════════════
+
+function isJsonBinReady() {
+  return JSONBIN_BIN_ID !== 'PASTE_YOUR_BIN_ID_HERE' && JSONBIN_KEY !== '$2a$10$PASTE_YOUR_API_KEY_HERE';
 }
 
-async function cloudSaveProduct(p) {
+// Load products from cloud — runs on every page load for all customers
+async function loadFromCloud() {
+  if (!isJsonBinReady()) return false;
   try {
-    const d = {id:p.id,name:p.name,cat:p.cat,price:p.price,emoji:p.emoji,desc:p.desc||'',inStock:p.inStock};
-    if (p.photo && p.photo.startsWith('data:')) {
-      // Compress before sending
-      d.photo = await compressImg(p.photo, 600, 0.65);
-    } else { d.photo = p.photo || null; }
-    d.video = null; // videos too large for Firestore
-    await fetch(FS_BASE + '/products/' + p.id, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(toFS(d))});
-    showSync('✓ Synced to cloud');
-  } catch(e) {}
+    // Public bins: read without master key to avoid CORS issues
+    // (bin must be set to Public on jsonbin.io)
+    const res = await fetch(JSONBIN_URL + '/latest', {
+      headers: {
+        'X-Master-Key': JSONBIN_KEY,
+        'X-Access-Key': JSONBIN_ACCESS_KEY
+      }
+    });
+    if (!res.ok) {
+      console.warn('Cloud load HTTP error:', res.status);
+      return false;
+    }
+    const data = await res.json();
+    const cloud = data.record && data.record.products;
+    if (!cloud || !cloud.length) return false;
+
+    // Reattach local photos (cloud stores compressed, local has full quality)
+    cloud.forEach(p => {
+      const local = products.find(lp => String(lp.id) === String(p.id));
+      if (!p.photo && local && local.photo) p.photo = local.photo;
+      if (!p.video && local && local.video) p.video = local.video;
+      if (!p.emoji) p.emoji = EMOJIS[p.cat] || '👗';
+      if (!p.specs) p.specs = {Delivery:'4–6 working days'};
+    });
+
+    products.length = 0;
+    cloud.forEach(p => products.push(p));
+    filtered = [...products];
+    saveLocal();
+    showSync('✓ Live — customers see your latest changes');
+    return true;
+  } catch(e) {
+    console.warn('Cloud load failed, using local data');
+    return false;
+  }
 }
 
-async function cloudDeleteProduct(id) {
-  try { await fetch(FS_BASE + '/products/' + id, {method:'DELETE'}); } catch(e) {}
+// Save all products to cloud — called after any admin change
+async function syncAllToCloud() {
+  if (!isJsonBinReady()) return;
+  try {
+    showSync('Saving...');
+    const slim = await Promise.all(products.map(async p => {
+      let photo = p.photo || null;
+      if (photo && photo.startsWith('data:')) photo = await compressImg(photo, 500, 0.6);
+      return {
+        id: p.id, name: p.name, cat: p.cat, price: p.price,
+        emoji: p.emoji, desc: p.desc||'', specs: p.specs||{},
+        inStock: p.inStock !== false, photo, video: null
+      };
+    }));
+    const res = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY
+      },
+      body: JSON.stringify({ products: slim })
+    });
+    if (res.ok) {
+      showSync('✓ Saved — customers can see your changes');
+    } else {
+      showSync('⚠ Save failed — check your connection');
+    }
+  } catch(e) {
+    console.warn('Cloud save failed:', e.message);
+    showSync('⚠ Save failed — check your connection');
+  }
 }
+
+// These keep the same names so all existing calls work
+async function cloudSaveProduct(p) { await syncAllToCloud(); }
+async function cloudDeleteProduct(id) { await syncAllToCloud(); }
 
 async function cloudSaveOrder(order) {
-  try {
-    await fetch(FS_BASE + '/orders', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(toFS({...order, createdAt:new Date().toISOString()}))});
-  } catch(e) {}
+  // Orders saved to localStorage only (sufficient for tracking)
+  // For full order cloud backup, set up a separate bin
 }
 
 // ═══════════════════════════════════════════════
@@ -1034,11 +1190,13 @@ function openDetail(id) {
 }
 
 function renderColours(filter) {
-  const q = filter.toLowerCase();
+  const q = (filter||'').toLowerCase();
   const cols = q ? COLOURS.filter(c => c.n.toLowerCase().includes(q)) : COLOURS;
   document.getElementById('dColours').innerHTML = cols.map(c => {
     const sel = selColour && selColour.n===c.n ? ' sel' : '';
-    return '<div class="cswatch'+sel+'" style="background:'+c.h+'" title="'+c.n+'" onclick="pickColour(this,\''+c.n+'\')"></div>';
+    // Short label for display inside swatch
+    const label = c.n.length > 10 ? c.n.substring(0,9)+'…' : c.n;
+    return '<div class="cswatch'+sel+'" style="background:'+c.h+'" title="'+c.n+'" onclick="pickColour(this,\''+c.n+'\')"><span class="cswatch-label">'+label+'</span></div>';
   }).join('');
 }
 
@@ -1282,6 +1440,8 @@ function switchDash(tab, el) {
 }
 
 function renderDashKPIs() {
+  const banner = document.getElementById('syncSetupBanner');
+  if (banner) banner.style.display = isJsonBinReady() ? 'none' : 'block';
   loadOrders();
   const inStock=products.filter(p=>p.inStock!==false).length;
   const outStock=products.filter(p=>p.inStock===false).length;
@@ -1469,9 +1629,18 @@ function showSync(msg) {
 // INIT
 // ═══════════════════════════════════════════════
 (function(){
+  // Step 1: Show local data immediately (instant)
   loadLocal();
   filtered=[...products];
   renderProducts(filtered);
+
+  // Step 2: Fetch latest from cloud so customers see admin's changes
+  loadFromCloud().then(loaded => {
+    if (loaded) {
+      filtered = [...products];
+      renderProducts(filtered);
+    }
+  });
 })();
 </script>
 </body>
