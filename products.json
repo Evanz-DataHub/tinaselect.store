@@ -1,5 +1,20 @@
 [
   {
+    "id": 1774365929785,
+    "name": "Pallazo Trousers",
+    "cat": "palazzo",
+    "price": 70,
+    "emoji": "👘",
+    "desc": "",
+    "specs": {
+      "Type": "Palazzo Trousers",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
     "id": 1774365839195,
     "name": "Crop Top",
     "cat": "crop",
