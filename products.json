@@ -1,5 +1,20 @@
 [
   {
+    "id": 1774366013924,
+    "name": "Basic Top",
+    "cat": "palazzo",
+    "price": 40,
+    "emoji": "👘",
+    "desc": "",
+    "specs": {
+      "Type": "Palazzo Trousers",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
     "id": 1774365929785,
     "name": "Pallazo Trousers",
     "cat": "palazzo",
