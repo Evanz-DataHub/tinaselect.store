@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "name": "Dress",
+    "cat": "dress",
+    "price": 100,
+    "emoji": "👗",
+    "desc": "Elegant wrap-style handmade dress with subtle Kente fabric trim. Flattering silhouette, perfect for church, events, or dinner dates.",
+    "specs": {
+      "Type": "Wrap Dress",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": "data:image/jpeg;base64,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",
+    "video": null
+  },
+  {
+    "id": 2,
+    "name": "Ankara Midi Dress",
+    "cat": "dress",
+    "price": 160,
+    "emoji": "👗",
+    "desc": "Vibrant Ankara print midi dress, handcut and sewn to perfection. Side pockets, sleeveless. Great for any occasion.",
+    "specs": {
+      "Type": "Midi Dress",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 3,
+    "name": "Flowy Maxi Dress",
+    "cat": "dress",
+    "price": 200,
+    "emoji": "👗",
+    "desc": "Stunning floor-length handmade maxi dress in lightweight chiffon. Adjustable tie waist.",
+    "specs": {
+      "Type": "Maxi Dress",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 4,
+    "name": "Off-Shoulder Maxi Dress",
+    "cat": "dress",
+    "price": 195,
+    "emoji": "👗",
+    "desc": "Romantic off-shoulder maxi dress with ruffled hem. Ideal for weddings, baby showers, and events.",
+    "specs": {
+      "Type": "Off-Shoulder Dress",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 5,
+    "name": "Wide-Leg Palazzo Trousers",
+    "cat": "palazzo",
+    "price": 130,
+    "emoji": "👘",
+    "desc": "Chic wide-leg palazzo trousers with a high waist and elastic band. Ultra-comfortable and stylish.",
+    "specs": {
+      "Type": "Palazzo Trousers",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 6,
+    "name": "Ankara Palazzo Set",
+    "cat": "palazzo",
+    "price": 150,
+    "emoji": "👘",
+    "desc": "Matching Ankara palazzo trousers — pairs beautifully with a plain top or our Nova tops.",
+    "specs": {
+      "Type": "Palazzo Trousers",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 7,
+    "name": "Lace Two Piece Combo",
+    "cat": "twopiece",
+    "price": 220,
+    "emoji": "✨",
+    "desc": "Elegant lace two-piece set — crop top and matching skirt or trouser. Perfect for parties and formal events.",
+    "specs": {
+      "Type": "Two Piece Set",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 8,
+    "name": "Ankara Two Piece Combo",
+    "cat": "twopiece",
+    "price": 190,
+    "emoji": "✨",
+    "desc": "Bold Ankara two-piece — top and matching trousers. A complete handmade outfit that turns heads.",
+    "specs": {
+      "Type": "Two Piece Set",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 9,
+    "name": "Co-ord Crop Set",
+    "cat": "twopiece",
+    "price": 170,
+    "emoji": "✨",
+    "desc": "Matching co-ord crop top and wide-leg trouser set. Clean lines, modern cut.",
+    "specs": {
+      "Type": "Co-ord Set",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 10,
+    "name": "Reversible Top",
+    "cat": "top",
+    "price": 85,
+    "emoji": "👚",
+    "desc": "Innovative reversible top — two styles in one! Wear one way for casual, flip for elegant.",
+    "specs": {
+      "Type": "Reversible Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 11,
+    "name": "Nova Top",
+    "cat": "top",
+    "price": 75,
+    "emoji": "👚",
+    "desc": "Trendy Nova top with a modern cut. Versatile enough for work or nights out.",
+    "specs": {
+      "Type": "Nova Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 12,
+    "name": "Classic Basic Top",
+    "cat": "top",
+    "price": 55,
+    "emoji": "👚",
+    "desc": "Clean, simple, and perfectly made basic top. Available in a wide range of colours.",
+    "specs": {
+      "Type": "Basic Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 13,
+    "name": "Backless Occasion Top",
+    "cat": "top",
+    "price": 95,
+    "emoji": "👚",
+    "desc": "Elegant backless top with flattering open-back design. Perfect for dinners and special occasions.",
+    "specs": {
+      "Type": "Backless Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 14,
+    "name": "Cow Print Top",
+    "cat": "top",
+    "price": 70,
+    "emoji": "👚",
+    "desc": "Fun and fashionable cow print top — a bold statement piece.",
+    "specs": {
+      "Type": "Cow Print Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 15,
+    "name": "Peplum Top",
+    "cat": "top",
+    "price": 80,
+    "emoji": "👚",
+    "desc": "Flattering peplum top with a flared waist detail. Elegant for office, stylish for weekends.",
+    "specs": {
+      "Type": "Peplum Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 16,
+    "name": "Strapless Tube Top",
+    "cat": "top",
+    "price": 50,
+    "emoji": "👚",
+    "desc": "Sleek strapless tube top. Boned interior for a secure fit.",
+    "specs": {
+      "Type": "Tube Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 17,
+    "name": "Ankara Crop Top",
+    "cat": "crop",
+    "price": 65,
+    "emoji": "🩱",
+    "desc": "Vibrant Ankara crop top with a short hem. Pair with palazzo trousers, jeans, or skirts.",
+    "specs": {
+      "Type": "Crop Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 18,
+    "name": "Ruched Crop Top",
+    "cat": "crop",
+    "price": 60,
+    "emoji": "🩱",
+    "desc": "Trendy ruched crop top with a figure-flattering design. Stretchy fabric for comfort.",
+    "specs": {
+      "Type": "Crop Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 19,
+    "name": "Printed Tube Crop",
+    "cat": "crop",
+    "price": 55,
+    "emoji": "🩱",
+    "desc": "Eye-catching printed tube top in fun patterns. Strapless, comfortable, and versatile.",
+    "specs": {
+      "Type": "Tube Crop",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  },
+  {
+    "id": 20,
+    "name": "Spaghetti Strap Crop Top",
+    "cat": "crop",
+    "price": 58,
+    "emoji": "🩱",
+    "desc": "Delicate spaghetti strap crop top with an adjustable neckline. Light and breezy.",
+    "specs": {
+      "Type": "Crop Top",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": null
+  }
+]
