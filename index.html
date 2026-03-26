@@ -283,9 +283,35 @@ nav{background:var(--charcoal);padding:0 5%;display:flex;align-items:center;just
 .kpi-ch{font-size:12px;}.kpi-ch.up{color:var(--green);}.kpi-ch.dn{color:var(--rose-dk);}
 .dash-st{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:16px;}
 .orders-table{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow-x:auto;}
-.ot-hd{display:grid;grid-template-columns:110px 1fr 100px 110px 110px;background:var(--warm);padding:12px 20px;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;min-width:580px;}
-.ot-row{display:grid;grid-template-columns:110px 1fr 100px 110px 110px;padding:14px 20px;border-top:1px solid var(--border);align-items:center;font-size:13px;min-width:580px;}
-.ot-row:hover{background:var(--warm);}
+.orders-table{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.order-card{border-bottom:1px solid var(--border);padding:20px;transition:background .2s;}
+.order-card:last-child{border-bottom:none;}
+.order-card:hover{background:var(--warm);}
+.order-card-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.order-ref{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--rose-dk);font-weight:600;}
+.order-date{font-size:12px;color:var(--muted);}
+.order-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.order-info-box{background:var(--warm);border-radius:8px;padding:12px;}
+.order-info-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;}
+.order-info-val{font-size:13px;font-weight:500;color:var(--charcoal);line-height:1.5;}
+.order-items-title{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
+.order-items-list{display:flex;gap:10px;flex-wrap:wrap;}
+.order-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 8px;}
+.order-item-img{width:48px;height:48px;border-radius:6px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.order-item-img img{width:100%;height:100%;object-fit:cover;}
+.order-item-name{font-size:13px;font-weight:500;margin-bottom:2px;}
+.order-item-meta{font-size:11px;color:var(--muted);}
+.order-item-price{font-size:13px;font-weight:500;color:var(--rose-dk);margin-top:2px;}
+.order-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.order-act-btn{padding:7px 16px;border-radius:5px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--warm);transition:background .2s;}
+.order-act-btn:hover{background:var(--border);}
+.order-act-btn.wa{background:#25D366;color:#fff;border-color:#25D366;}
+.order-act-btn.wa:hover{background:#1fba58;}
+.ostatus{display:inline-flex;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:500;}
+.st-pending{background:#FEF3C7;color:#92400E;}
+.st-processing{background:#DBEAFE;color:#1E40AF;}
+.st-delivered{background:#D1FAE5;color:#065F46;}
+.st-cancelled{background:#FEE2E2;color:#991B1B;}
 .oid{font-weight:500;color:var(--rose-dk);}
 .ostatus{display:inline-flex;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:500;}
 .st-pending{background:#FEF3C7;color:#92400E;}.st-processing{background:#DBEAFE;color:#1E40AF;}
@@ -403,9 +429,8 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
   .story-h2{font-size:26px;}
   .fg-grid{grid-template-columns:1fr;gap:24px;}
   /* ORDERS TABLE */
-  .ot-hd,.ot-row{grid-template-columns:90px 1fr 80px;min-width:unset;}
-  .ot-hd>*:nth-child(4),.ot-hd>*:nth-child(5),
-  .ot-row>*:nth-child(4),.ot-row>*:nth-child(5){display:none;}
+  .order-info-grid{grid-template-columns:1fr 1fr;}
+  .order-items-list{flex-direction:column;}
 }
 @media(max-width:420px){
   .pgrid{grid-template-columns:repeat(2,1fr);gap:8px;}
@@ -674,7 +699,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
     </div>
     <div id="dash-orders" style="display:none">
       <div class="dash-st">All Orders</div>
-      <div class="orders-table"><div class="ot-hd"><span>Order ID</span><span>Customer</span><span>Total</span><span>Status</span><span>Date</span></div><div id="ordersBody"></div></div>
+      <div class="orders-table"><div id="ordersBody"></div></div>
     </div>
     <div id="dash-inventory" style="display:none">
       <div class="add-form">
@@ -1447,7 +1472,7 @@ function confirmOrder(ref) {
   const addr=document.getElementById('cusAddr').value, note=document.getElementById('cusNote').value;
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100), total=sub-disc;
   const itemsList=cart.map(i=>i.emoji+' '+i.name+' ×'+i.qty+' (Size '+i.size+', '+i.colour+')').join(', ');
-  const order={ref:orderRef,paystackRef:ref,name,phone,addr,note,items:cart.map(i=>({name:i.name,qty:i.qty,size:i.size,colour:i.colour,price:i.price})),promo:appliedPromo,discount:disc,total,status:'pending',date:new Date().toLocaleDateString('en-GB')};
+  const order={ref:orderRef,paystackRef:ref,name,phone,addr,note,items:cart.map(i=>({name:i.name,qty:i.qty,size:i.size,colour:i.colour,price:i.price,emoji:i.emoji,photo:i.photo||null})),promo:appliedPromo,discount:disc,total,status:'pending',date:new Date().toLocaleDateString('en-GB')};
   saveOrder(order);
   cloudSaveOrder(order);
   setTimeout(() => {
@@ -1517,9 +1542,82 @@ function renderDashKPIs() {
 
 function renderOrders() {
   loadOrders();
-  const body=document.getElementById('ordersBody');
-  if(!allOrders.length){body.innerHTML='<div class="ot-row" style="grid-template-columns:1fr"><span style="color:var(--muted);font-size:13px">No orders yet</span></div>';return;}
-  body.innerHTML=allOrders.map(o=>'<div class="ot-row"><span class="oid">'+o.ref+'</span><span>'+(o.name||'—')+'</span><span>GH₵'+(o.total||0)+'</span><span><span class="ostatus st-'+(o.status||'pending')+'">'+(o.status||'pending')+'</span></span><span>'+(o.date||'—')+'</span></div>').join('');
+  const body = document.getElementById('ordersBody');
+  if (!allOrders.length) {
+    body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:14px">No orders yet. Orders will appear here after customers pay.</div>';
+    return;
+  }
+  body.innerHTML = allOrders.map(o => buildOrderCard(o)).join('');
+}
+
+function buildOrderCard(o) {
+  const status = o.status || 'pending';
+  const phone = (o.phone || '').replace(/^0/, '');
+  const waText = 'Hi ' + (o.name||'') + '! Your TinaSelect order ' + (o.ref||'') + ' is being processed. We will deliver within 4-6 working days. Thank you!';
+
+  // Items
+  let itemsHtml = '';
+  (o.items || []).forEach(item => {
+    const img = item.photo
+      ? '<img src="' + item.photo + '" alt="' + item.name + '" style="width:100%;height:100%;object-fit:cover">'
+      : '<span style="font-size:22px">' + (item.emoji||'👗') + '</span>';
+    itemsHtml +=
+      '<div class="order-item">' +
+        '<div class="order-item-img">' + img + '</div>' +
+        '<div>' +
+          '<div class="order-item-name">' + item.name + '</div>' +
+          '<div class="order-item-meta">Size: ' + (item.size||'—') + ' · Colour: ' + (item.colour||'—') + ' · Qty: ' + (item.qty||1) + '</div>' +
+          '<div class="order-item-price">GH₵' + (item.price * (item.qty||1)) + '</div>' +
+        '</div>' +
+      '</div>';
+  });
+
+  // Status dropdown
+  const statuses = ['pending','processing','delivered','cancelled'];
+  let opts = '';
+  statuses.forEach(s => {
+    opts += '<option value="' + s + '"' + (s === status ? ' selected' : '') + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>';
+  });
+
+  return '<div class="order-card">' +
+    '<div class="order-card-top">' +
+      '<div>' +
+        '<div class="order-ref">' + (o.ref||'—') + '</div>' +
+        '<div class="order-date">📅 ' + (o.date||'—') + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+        '<span class="ostatus st-' + status + '">' + status + '</span>' +
+        '<select data-ref="' + (o.ref||'') + '" onchange="updateOrderStatus(this.dataset.ref,this.value)" style="border:1px solid var(--border);background:var(--card);border-radius:5px;padding:5px 8px;font-family:Jost,sans-serif;font-size:12px;outline:none;cursor:pointer">' + opts + '</select>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="order-info-grid">' +
+      '<div class="order-info-box"><div class="order-info-label">👤 Customer</div><div class="order-info-val">' + (o.name||'—') + '</div></div>' +
+      '<div class="order-info-box"><div class="order-info-label">📞 Phone</div><div class="order-info-val" style="color:var(--rose-dk);font-weight:500">' + (o.phone||'—') + '</div></div>' +
+      '<div class="order-info-box"><div class="order-info-label">💰 Total Paid</div><div class="order-info-val" style="color:var(--rose-dk);font-size:16px;font-weight:600">GH₵' + (o.total||0) + '</div></div>' +
+      '<div class="order-info-box" style="grid-column:span 2"><div class="order-info-label">📍 Delivery Address</div><div class="order-info-val">' + (o.addr||'—') + '</div></div>' +
+      (o.note ? '<div class="order-info-box"><div class="order-info-label">📝 Note</div><div class="order-info-val">' + o.note + '</div></div>' : '') +
+      (o.paystackRef ? '<div class="order-info-box"><div class="order-info-label">🧾 Paystack Ref</div><div class="order-info-val" style="font-size:11px;word-break:break-all">' + o.paystackRef + '</div></div>' : '') +
+    '</div>' +
+
+    '<div class="order-items-title">🛍 Items Ordered</div>' +
+    '<div class="order-items-list">' + itemsHtml + '</div>' +
+
+    '<div class="order-actions">' +
+      '<a href="https://wa.me/233' + phone + '?text=' + encodeURIComponent(waText) + '" target="_blank" style="text-decoration:none"><button class="order-act-btn wa">💬 WhatsApp Customer</button></a>' +
+      '<a href="tel:+233' + phone + '" style="text-decoration:none"><button class="order-act-btn">📞 Call Customer</button></a>' +
+    '</div>' +
+  '</div>';
+}
+
+function updateOrderStatus(ref, newStatus) {
+  const order = allOrders.find(o => o.ref === ref);
+  if (!order) return;
+  order.status = newStatus;
+  // Save updated orders
+  try { localStorage.setItem('ts_orders', JSON.stringify(allOrders)); } catch(e) {}
+  renderOrders();
+  showDashToast('Order '+ref+' marked as '+newStatus);
 }
 
 function renderTopItems() {
