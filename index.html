@@ -474,7 +474,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 </head>
 <body>
 
-<div class="wa-float" id="waFloat" onclick="openWA('Hi! I need help with TinaSelect')">💬</div>
+<div class="wa-float" id="waFloat" onclick="openWA('Hi! Help needed - TinaSelect')">💬</div>
 <div id="syncBadge"></div>
 
 <nav>
@@ -496,7 +496,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
       <p>Every piece is handcrafted with love — unique designs, quality fabric, and a perfect fit. From elegant dresses to trendy tops, all made to order.</p>
       <div class="hero-btns">
         <button class="btn-fill" onclick="scrollToProds()">Shop the Collection</button>
-        <button class="btn-ghost" onclick="openWA('Hi! I want to place a custom order with TinaSelect')">Custom Order</button>
+        <button class="btn-ghost" onclick="openWA('Hi! Custom order enquiry - TinaSelect')">Custom Order</button>
       </div>
       <div class="hero-stats">
         <div><div class="stat-val">20+</div><div class="stat-label">Styles available</div></div>
@@ -566,9 +566,9 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
       </ul></div>
       <div><div class="fh">Help</div><ul class="fl-list">
         <li onclick="showPage('track')">Track My Order</li>
-        <li onclick="openWA('Hi! I want to place a custom order')">Custom Orders</li>
+        <li onclick="openWA('Hi! Custom order enquiry')">Custom Orders</li>
         <li onclick="showPage('story')">Our Story</li>
-        <li onclick="openWA('Hi! I need help')">Contact Us</li>
+        <li onclick="openWA('Hi! Help needed')">Contact Us</li>
       </ul></div>
     </div>
     <div class="fbottom">© 2025 TinaSelect · 0540250468 / 0531872111 · Handmade with ♥ in Ghana</div>
@@ -591,7 +591,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
         <div class="dprice" id="dPrice"></div>
         <p class="ddesc" id="dDesc"></p>
         <div class="sel-section">
-          <div class="sel-label">Select Size <span style="color:var(--rose-dk);font-weight:400;font-size:11px;cursor:pointer" onclick="openWA('Hi! I need sizing help at TinaSelect')">Size Guide →</span></div>
+          <div class="sel-label">Select Size <span style="color:var(--rose-dk);font-weight:400;font-size:11px;cursor:pointer" onclick="openWA('Hi! Sizing help needed')">Size Guide →</span></div>
           <div class="sizes" id="dSizes"></div>
         </div>
         <div class="sel-section">
@@ -653,7 +653,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
   <div class="contact-strip">
     <h2>Get in Touch</h2><p>Have a question, want a custom piece, or just want to say hello?</p>
     <div class="contact-btns">
-      <button class="btn-fill" onclick="openWA('Hi! I want to place a custom order with TinaSelect')">💬 WhatsApp Us</button>
+      <button class="btn-fill" onclick="openWA('Hi! Custom order enquiry - TinaSelect')">💬 WhatsApp Us</button>
       <button class="btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="window.location.href='tel:+233540250468'">📞 0540250468</button>
       <button class="btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="window.location.href='tel:+233531872111'">📞 0531872111</button>
     </div>
@@ -670,7 +670,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
       <button class="btn-fill" onclick="trackOrder()">Track</button>
     </div>
     <div class="track-result" id="trackResult"></div>
-    <p style="font-size:13px;color:var(--muted);margin-top:24px">Can't find your order? <span style="color:var(--rose-dk);cursor:pointer" onclick="openWA('Hi! I need help tracking my TinaSelect order')">WhatsApp us →</span></p>
+    <p style="font-size:13px;color:var(--muted);margin-top:24px">Can't find your order? <span style="color:var(--rose-dk);cursor:pointer" onclick="openWA('Hi! Help needed tracking my TinaSelect order')">WhatsApp us →</span></p>
   </div>
 </div>
 
@@ -817,7 +817,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
           <div class="suc-desc">Payment received! Your handmade piece will be crafted and delivered within 4–6 working days.</div>
           <div class="suc-ref"><strong id="oRef">#TS-0000</strong><span>Save this to track your order</span></div>
           <button class="mbtn" onclick="closeAll()">Continue Shopping</button>
-          <button class="mbtn-out" onclick="openWA('Hi! I want to track my TinaSelect order')">Track on WhatsApp</button>
+          <button class="mbtn-out" onclick="openWA('Hi! Track my order')">Track on WhatsApp</button>
         </div>
       </div>
     </div>
@@ -1015,113 +1015,17 @@ function loadLocal() {
   } catch(e) { console.warn('loadLocal failed', e); }
 }
 
-function saveOrder(order) {
-  try {
-    // Save locally first (instant)
-    const orders = JSON.parse(localStorage.getItem('ts_orders') || '[]');
-    // Avoid duplicate refs
-    const exists = orders.find(o => o.ref === order.ref);
-    if (!exists) orders.unshift(order);
-    localStorage.setItem('ts_orders', JSON.stringify(orders));
-    allOrders = orders;
-  } catch(e) {}
-  // Push to GitHub so all devices see it
-  pushOrderToGitHub(order);
-}
-
-function loadOrders() {
-  // Load from localStorage first
-  try { allOrders = JSON.parse(localStorage.getItem('ts_orders') || '[]'); }
-  catch(e) { allOrders = []; }
-}
-
-async function loadOrdersFromCloud() {
-  // Fetch all orders from GitHub — works on any device
-  try {
-    const res = await fetch(ORDERS_URL + '?t=' + Date.now());
-    if (!res.ok) return;
-    const cloud = await res.json();
-    if (!Array.isArray(cloud)) return;
-    // Merge with local orders (avoid duplicates, keep all)
-    const localRefs = new Set(allOrders.map(o => o.ref));
-    cloud.forEach(o => { if (!localRefs.has(o.ref)) allOrders.push(o); });
-    // Sort newest first
-    allOrders.sort((a, b) => new Date(b.timestamp||0) - new Date(a.timestamp||0));
-    // Save merged back to local
-    try { localStorage.setItem('ts_orders', JSON.stringify(allOrders)); } catch(e) {}
-  } catch(e) { console.warn('Orders cloud load failed:', e.message); }
-}
-
-async function pushOrderToGitHub(newOrder) {
-  // Pull existing orders.json, add new order, push back
-  try {
-    let existingOrders = [];
-    let sha = null;
-    // Get current orders.json
-    try {
-      const check = await fetch(GITHUB_ORDERS_API, {
-        headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
-      });
-      if (check.ok) {
-        const data = await check.json();
-        sha = data.sha;
-        const decoded = decodeURIComponent(escape(atob(data.content.split('\n').join(''))));
-        existingOrders = JSON.parse(decoded);
-      }
-    } catch(e) {}
-    // Add new order, avoid duplicates
-    const exists = existingOrders.find(o => o.ref === newOrder.ref);
-    if (!exists) existingOrders.unshift(newOrder);
-    // Push updated orders
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(existingOrders, null, 2))));
-    const body = { message: 'New order ' + newOrder.ref, content: encoded, ...(sha ? {sha} : {}) };
-    await fetch(GITHUB_ORDERS_API, {
-      method: 'PUT',
-      headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-  } catch(e) { console.warn('Order push to GitHub failed:', e.message); }
-}
-
-async function saveOrderStatus(ref, status) {
-  // Update status in both local and GitHub
-  try {
-    const check = await fetch(GITHUB_ORDERS_API, {
-      headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (!check.ok) return;
-    const data = await check.json();
-    const decoded = decodeURIComponent(escape(atob(data.content.split('\n').join(''))));
-    const orders = JSON.parse(decoded);
-    const o = orders.find(x => x.ref === ref);
-    if (o) o.status = status;
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
-    await fetch(GITHUB_ORDERS_API, {
-      method: 'PUT',
-      headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Update order status ' + ref, content: encoded, sha: data.sha })
-    });
-  } catch(e) {}
-}
-
 // ═══════════════════════════════════════════════
-// CLOUD (Firestore REST — background sync)
+// CLOUD SYNC — products to GitHub
 // ═══════════════════════════════════════════════
-// ═══════════════════════════════════════════════
-// CLOUD SYNC via JSONBin.io
-// Simple, free, works instantly — no Firebase setup needed
-// ═══════════════════════════════════════════════
-
 function isCloudReady() { return true; }
 
-// Load latest products from products.json in the GitHub repo
 async function loadFromCloud() {
   try {
     const res = await fetch(PRODUCTS_URL + '?t=' + Date.now());
     if (!res.ok) return false;
     const cloud = await res.json();
     if (!Array.isArray(cloud) || !cloud.length) return false;
-    // Reattach local photos
     cloud.forEach(p => {
       const local = products.find(lp => String(lp.id) === String(p.id));
       if (!p.photo && local && local.photo) p.photo = local.photo;
@@ -1135,78 +1039,35 @@ async function loadFromCloud() {
     saveLocal();
     showSync('✓ Up to date');
     return true;
-  } catch(e) {
-    return false;
-  }
+  } catch(e) { return false; }
 }
 
-// Auto-push products.json to GitHub so customers see changes immediately
 async function syncAllToCloud() {
   try {
     showSync('Saving...');
-    // Build slim product list (compress photos, drop videos)
     const slim = await Promise.all(products.map(async p => {
       let photo = p.photo || null;
       if (photo && photo.startsWith('data:')) photo = await compressImg(photo, 500, 0.6);
-      return {
-        id:p.id, name:p.name, cat:p.cat, price:p.price,
-        emoji:p.emoji, desc:p.desc||'', specs:p.specs||{},
-        inStock:p.inStock!==false, photo, video:null
-      };
+      return {id:p.id,name:p.name,cat:p.cat,price:p.price,emoji:p.emoji,desc:p.desc||'',specs:p.specs||{},inStock:p.inStock!==false,photo,video:null};
     }));
-
-    const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(slim, null, 2))));
-
-    // Check if file already exists (need its SHA to update)
     let sha = null;
     try {
-      const check = await fetch(GITHUB_API, {
-        headers: {
-          'Authorization': 'token ' + GITHUB_TOKEN,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-      if (check.ok) {
-        const existing = await check.json();
-        sha = existing.sha;
-      }
+      const check = await fetch(GITHUB_API, {headers:{'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+      if (check.ok) { const d = await check.json(); sha = d.sha; }
     } catch(e) {}
-
-    // Push to GitHub
-    const body = {
-      message: 'Update products ' + new Date().toISOString(),
-      content: newContent,
-      ...(sha ? {sha} : {})
-    };
-
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(slim, null, 2))));
     const res = await fetch(GITHUB_API, {
-      method: 'PUT',
-      headers: {
-        'Authorization': 'token ' + GITHUB_TOKEN,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
+      method:'PUT',
+      headers:{'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:'Update products '+new Date().toISOString(),content:encoded,...(sha?{sha}:{})})
     });
-
-    if (res.ok) {
-      showSync('✓ Live — customers see your changes in ~60 seconds');
-      showDashToast('✓ Changes saved! Customers will see them in about 60 seconds.');
-    } else {
-      const err = await res.json();
-      console.warn('GitHub push failed:', err.message);
-      showSync('⚠ Sync failed');
-      showDashToast('Sync failed: ' + (err.message || 'Unknown error'));
-    }
-  } catch(e) {
-    console.warn('Sync error:', e.message);
-    showSync('⚠ Sync failed');
-  }
+    if (res.ok) { showSync('✓ Saved — customers can see your changes'); showDashToast('✓ Changes saved! Customers will see them in ~60 seconds.'); }
+    else { showSync('⚠ Sync failed'); showDashToast('Sync failed — check your connection'); }
+  } catch(e) { showSync('⚠ Sync failed'); }
 }
 
 async function cloudSaveProduct(p) { await syncAllToCloud(); }
 async function cloudDeleteProduct(id) { await syncAllToCloud(); }
-async function cloudSaveOrder(order) { await pushOrderToGitHub(order); }
 
 // ═══════════════════════════════════════════════
 // IMAGE COMPRESSION
@@ -1234,18 +1095,14 @@ function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   window.scrollTo(0,0);
-
   const isAdmin = (page === 'dashboard' || page === 'dash-login');
   document.getElementById('waFloat').style.display = isAdmin ? 'none' : 'flex';
   document.getElementById('navCartBtn').style.display = isAdmin ? 'none' : 'flex';
-  // Clear any lingering toast when going to admin
   if (isAdmin) document.getElementById('toast').classList.remove('show');
-
   if (page === 'shop') renderProducts(filtered);
   if (page === 'dashboard') { renderDashKPIs(); renderInventory(); renderOrders(); renderTopItems(); }
 }
 
-// Logo tap x5 → dashboard
 document.getElementById('logoBtn').addEventListener('click', () => {
   showPage('shop');
   tapCount++;
@@ -1253,9 +1110,7 @@ document.getElementById('logoBtn').addEventListener('click', () => {
   tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
   if (tapCount >= 5) { tapCount = 0; showPage(dashUnlocked ? 'dashboard' : 'dash-login'); }
 });
-// Keyboard shortcut
 document.addEventListener('keydown', e => { if (e.ctrlKey && e.shiftKey && e.key === 'A') showPage(dashUnlocked ? 'dashboard' : 'dash-login'); });
-// URL hash
 if (window.location.hash === '#admin') showPage(dashUnlocked ? 'dashboard' : 'dash-login');
 
 // ═══════════════════════════════════════════════
@@ -1266,7 +1121,6 @@ function renderProducts(list) {
   if (!list.length) { g.innerHTML = '<p style="color:var(--muted);font-size:14px;grid-column:1/-1;padding:40px 0;text-align:center">No styles found.</p>'; return; }
   g.innerHTML = list.map(p => {
     const bg = BGS[p.cat] || BGS.top;
-    // Media element — sits on top of emoji
     let media = '';
     if (p.video) media = '<video class="pimg-media" src="' + p.video + '" muted autoplay loop playsinline></video>';
     else if (p.photo) media = '<img class="pimg-media" src="' + p.photo + '" alt="' + p.name + '">';
@@ -1315,8 +1169,7 @@ function quickAdd(id) {
 // PRODUCT DETAIL
 // ═══════════════════════════════════════════════
 function openDetail(id) {
-  const p = products.find(x => x.id===id);
-  if (!p) return;
+  const p = products.find(x => x.id===id); if (!p) return;
   currentDetail=p; detailQty=1; selSize=null; selColour=null;
   document.getElementById('dQtyNum').textContent = 1;
   document.getElementById('colourSearch').value = '';
@@ -1326,207 +1179,159 @@ function openDetail(id) {
   document.getElementById('colourList').classList.remove('open');
   document.getElementById('colourBtn').classList.remove('open');
   document.getElementById('colourBtnArrow').classList.remove('open');
-
   const main = document.getElementById('dImgMain');
   main.style.background = BGS[p.cat]||BGS.top;
-  // Clear and rebuild
-  main.innerHTML = p.emoji; // emoji fallback
-  if (p.video) {
-    const v = document.createElement('video');
-    v.className='dimain-media'; v.src=p.video; v.autoplay=true; v.muted=true; v.loop=true; v.playsInline=true;
-    main.appendChild(v);
-  } else if (p.photo) {
-    const i = document.createElement('img');
-    i.className='dimain-media'; i.src=p.photo; i.alt=p.name;
-    main.appendChild(i);
-  }
-
+  main.innerHTML = p.emoji;
+  if (p.video) { const v=document.createElement('video'); v.className='dimain-media'; v.src=p.video; v.autoplay=true; v.muted=true; v.loop=true; v.playsInline=true; main.appendChild(v); }
+  else if (p.photo) { const i=document.createElement('img'); i.className='dimain-media'; i.src=p.photo; i.alt=p.name; main.appendChild(i); }
   document.getElementById('dThumbs').innerHTML = ['main','📦','🏷️'].map((e,i) => {
-    const bg = BGS[p.cat]||BGS.top;
+    const bg=BGS[p.cat]||BGS.top;
     if (i===0) {
-      let cnt = p.emoji;
-      if (p.video) cnt += '<video style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" src="'+p.video+'" muted autoplay loop playsinline></video>';
-      else if (p.photo) cnt += '<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" src="'+p.photo+'" alt="">';
+      let cnt=p.emoji;
+      if(p.video) cnt+='<video style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" src="'+p.video+'" muted autoplay loop playsinline></video>';
+      else if(p.photo) cnt+='<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" src="'+p.photo+'" alt="">';
       return '<div class="dthumb active" style="background:'+bg+';position:relative;overflow:hidden">'+cnt+'</div>';
     }
     return '<div class="dthumb" style="background:'+bg+'">'+e+'</div>';
   }).join('');
-
-  document.getElementById('dBadges').innerHTML = '<span class="dbadge dbadge-rose">Handmade</span><span class="dbadge dbadge-gold">Made to Order</span>' + (p.inStock===false ? '<span class="dbadge" style="background:#FEE2E2;color:#991B1B">Sold Out</span>' : '<span class="dbadge dbadge-green">In Stock</span>');
+  document.getElementById('dBadges').innerHTML = '<span class="dbadge dbadge-rose">Handmade</span><span class="dbadge dbadge-gold">Made to Order</span>'+(p.inStock===false?'<span class="dbadge" style="background:#FEE2E2;color:#991B1B">Sold Out</span>':'<span class="dbadge dbadge-green">In Stock</span>');
   document.getElementById('dName').textContent = p.name;
-  document.getElementById('dPrice').textContent = 'GH₵' + p.price;
+  document.getElementById('dPrice').textContent = 'GH₵'+p.price;
   document.getElementById('dDesc').textContent = p.desc;
   document.getElementById('dSizes').innerHTML = SIZES.map(s => '<div class="sz" onclick="selSz(this,'+s+')">'+s+'</div>').join('');
   renderColours('');
   document.getElementById('dSpecs').innerHTML = Object.entries(p.specs||{}).map(([k,v]) => '<div class="spec-row"><span class="sk">'+k+'</span><span class="sv">'+v+'</span></div>').join('');
-
   const atcBtn = document.getElementById('dAtcBtn');
-  atcBtn.textContent = 'Add to Cart'; atcBtn.style.background = '';
-  atcBtn.disabled = p.inStock===false;
-
+  atcBtn.textContent='Add to Cart'; atcBtn.style.background=''; atcBtn.disabled=p.inStock===false;
   const rel = products.filter(x => x.cat===p.cat && x.id!==p.id).slice(0,4);
   document.getElementById('relatedGrid').innerHTML = rel.map(r => {
-    let rm = '';
-    if (r.video) rm='<video class="pimg-media" src="'+r.video+'" muted autoplay loop playsinline></video>';
-    else if (r.photo) rm='<img class="pimg-media" src="'+r.photo+'" alt="'+r.name+'">';
+    let rm='';
+    if(r.video) rm='<video class="pimg-media" src="'+r.video+'" muted autoplay loop playsinline></video>';
+    else if(r.photo) rm='<img class="pimg-media" src="'+r.photo+'" alt="'+r.name+'">';
     return '<div class="pcard" onclick="openDetail('+r.id+')"><div class="pimg" style="background:'+(BGS[r.cat]||BGS.top)+'">'+r.emoji+rm+'</div><div class="pinfo"><div class="pname">'+r.name+'</div><div class="pfooter"><span class="pprice">GH₵'+r.price+'</span><button class="atc" onclick="event.stopPropagation();quickAdd('+r.id+')">Add</button></div></div></div>';
   }).join('');
-
   showPage('detail');
 }
 
 function renderColours(filter) {
-  const q = (filter||'').toLowerCase();
-  const cols = q ? COLOURS.filter(c => c.n.toLowerCase().includes(q)) : COLOURS;
-  document.getElementById('dColours').innerHTML = cols.map(c => {
-    const sel = selColour && selColour.n===c.n ? ' sel' : '';
-    return '<div class="colour-option'+sel+'" onclick="pickColour(this,\''+c.n+'\')">' +
-      '<span class="colour-option-dot" style="background:'+c.h+'"></span>' +
-      '<span class="colour-option-name">'+c.n+'</span>' +
-      '</div>';
+  const q=(filter||'').toLowerCase();
+  const cols=q?COLOURS.filter(c=>c.n.toLowerCase().includes(q)):COLOURS;
+  document.getElementById('dColours').innerHTML=cols.map(c=>{
+    const sel=selColour&&selColour.n===c.n?' sel':'';
+    return '<div class="colour-option'+sel+'" data-name="'+c.n+'" onclick="pickColourByData(this)"><span class="colour-option-dot" style="background:'+c.h+'"></span><span class="colour-option-name">'+c.n+'</span></div>';
   }).join('');
 }
 
 function toggleColourDropdown() {
-  const list = document.getElementById('colourList');
-  const btn  = document.getElementById('colourBtn');
-  const arr  = document.getElementById('colourBtnArrow');
-  const isOpen = list.classList.contains('open');
-  list.classList.toggle('open', !isOpen);
-  btn.classList.toggle('open', !isOpen);
-  arr.classList.toggle('open', !isOpen);
-  if (!isOpen) {
+  const list=document.getElementById('colourList'), btn=document.getElementById('colourBtn'), arr=document.getElementById('colourBtnArrow');
+  const isOpen=list.classList.contains('open');
+  list.classList.toggle('open',!isOpen); btn.classList.toggle('open',!isOpen); arr.classList.toggle('open',!isOpen);
+  if(!isOpen){
     document.getElementById('colourSearch').focus();
-    // Close when clicking outside
-    setTimeout(() => {
-      document.addEventListener('click', function closeDD(e) {
-        if (!document.getElementById('colourWrap').contains(e.target)) {
-          list.classList.remove('open');
-          btn.classList.remove('open');
-          arr.classList.remove('open');
-          document.removeEventListener('click', closeDD);
+    setTimeout(()=>{
+      document.addEventListener('click',function closeDD(e){
+        if(!document.getElementById('colourWrap').contains(e.target)){
+          list.classList.remove('open'); btn.classList.remove('open'); arr.classList.remove('open');
+          document.removeEventListener('click',closeDD);
         }
       });
-    }, 10);
+    },10);
   }
 }
 
+function pickColourByData(el) { pickColour(el, el.dataset.name); }
 function pickColour(el, name) {
-  document.querySelectorAll('.colour-option').forEach(s => s.classList.remove('sel'));
+  document.querySelectorAll('.colour-option').forEach(s=>s.classList.remove('sel'));
   el.classList.add('sel');
-  selColour = COLOURS.find(c => c.n===name) || {n:name,h:'#888'};
-  // Update button
-  document.getElementById('colourBtnDot').style.background = selColour.h;
-  document.getElementById('colourBtnName').textContent = name;
-  document.getElementById('selColourName').textContent = '';
-  // Close dropdown
+  selColour=COLOURS.find(c=>c.n===name)||{n:name,h:'#888'};
+  document.getElementById('colourBtnDot').style.background=selColour.h;
+  document.getElementById('colourBtnName').textContent=name;
+  document.getElementById('selColourName').textContent='';
   document.getElementById('colourList').classList.remove('open');
   document.getElementById('colourBtn').classList.remove('open');
   document.getElementById('colourBtnArrow').classList.remove('open');
 }
 
-function selSz(el, s) {
-  document.querySelectorAll('.sz').forEach(x => x.classList.remove('sel'));
-  el.classList.add('sel');
-  selSize = s;
-}
-
-function chDQty(d) { detailQty = Math.max(1,detailQty+d); document.getElementById('dQtyNum').textContent = detailQty; }
+function selSz(el,s){ document.querySelectorAll('.sz').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); selSize=s; }
+function chDQty(d){ detailQty=Math.max(1,detailQty+d); document.getElementById('dQtyNum').textContent=detailQty; }
 
 function addDetailCart() {
-  if (!currentDetail) return;
-  if (currentDetail.inStock===false) { toast('This item is sold out'); return; }
-  addToCart(currentDetail.id, detailQty, selSize ? String(selSize) : 'Unspecified', selColour ? selColour.n : 'Unspecified');
-  const b = document.getElementById('dAtcBtn');
+  if(!currentDetail) return;
+  if(currentDetail.inStock===false){ toast('This item is sold out'); return; }
+  addToCart(currentDetail.id,detailQty,selSize?String(selSize):'Unspecified',selColour?selColour.n:'Unspecified');
+  const b=document.getElementById('dAtcBtn');
   b.textContent='✓ Added'; b.style.background='var(--green)';
-  setTimeout(() => { b.textContent='Add to Cart'; b.style.background=''; }, 2000);
+  setTimeout(()=>{ b.textContent='Add to Cart'; b.style.background=''; },2000);
 }
 
 function buyNow() {
-  if (!currentDetail || currentDetail.inStock===false) { toast('This item is sold out'); return; }
+  if(!currentDetail||currentDetail.inStock===false){ toast('This item is sold out'); return; }
   addDetailCart();
-  setTimeout(() => { closeCart(); openCheckout(); }, 300);
+  setTimeout(()=>{ closeCart(); openCheckout(); },300);
 }
 
 function detailWA() {
-  if (!currentDetail) return;
-  openWA('Hi! I\'m interested in: ' + currentDetail.name + ' (GH₵' + currentDetail.price + ') — Size ' + (selSize||'?') + ', Colour: ' + (selColour?selColour.n:'?'));
+  if(!currentDetail) return;
+  openWA('Hi! Interested in: '+currentDetail.name+' (GH₵'+currentDetail.price+') — Size '+(selSize||'?')+', Colour: '+(selColour?selColour.n:'?'));
 }
 
 // ═══════════════════════════════════════════════
 // CART
 // ═══════════════════════════════════════════════
-function addToCart(id, qty, size, colour) {
-  const p = products.find(x => x.id===id); if (!p) return;
-  const key = id+'-'+size+'-'+colour;
-  const ex = cart.find(c => c.key===key);
-  if (ex) ex.qty+=qty; else cart.push({...p, qty, size:size||'M', colour:colour||'Unspecified', key});
+function addToCart(id,qty,size,colour) {
+  const p=products.find(x=>x.id===id); if(!p) return;
+  const key=id+'-'+size+'-'+colour;
+  const ex=cart.find(c=>c.key===key);
+  if(ex) ex.qty+=qty; else cart.push({...p,qty,size:size||'M',colour:colour||'Unspecified',key});
   updateCC();
-  toast(p.name + ' added to cart');
+  toast(p.name+' added to cart');
 }
-
-function updateCC() { document.getElementById('cartCount').textContent = cart.reduce((s,i) => s+i.qty, 0); }
-
-function openCart() {
-  document.getElementById('cartOverlay').classList.add('open');
-  document.getElementById('cartSidebar').classList.add('open');
-  renderCart();
-}
-function closeCart() {
-  document.getElementById('cartOverlay').classList.remove('open');
-  document.getElementById('cartSidebar').classList.remove('open');
-}
+function updateCC(){ document.getElementById('cartCount').textContent=cart.reduce((s,i)=>s+i.qty,0); }
+function openCart(){ document.getElementById('cartOverlay').classList.add('open'); document.getElementById('cartSidebar').classList.add('open'); renderCart(); }
+function closeCart(){ document.getElementById('cartOverlay').classList.remove('open'); document.getElementById('cartSidebar').classList.remove('open'); }
 
 function renderCart() {
-  const c=document.getElementById('cartItems'), f=document.getElementById('cartFooter');
-  if (!cart.length) { c.innerHTML='<div class="cempty"><div class="ei">🛍️</div><p>Your cart is empty.<br>Discover our handmade collection!</p></div>'; f.style.display='none'; return; }
+  const c=document.getElementById('cartItems'),f=document.getElementById('cartFooter');
+  if(!cart.length){ c.innerHTML='<div class="cempty"><div class="ei">🛍️</div><p>Your cart is empty.<br>Discover our handmade collection!</p></div>'; f.style.display='none'; return; }
   f.style.display='block';
-  c.innerHTML = cart.map(item => {
-    const bg = BGS[item.cat]||BGS.top;
-    let imgHtml = item.photo ? '<img src="'+item.photo+'" alt="'+item.name+'" style="width:100%;height:100%;object-fit:cover">' :
-                  item.video ? '<video src="'+item.video+'" muted autoplay loop playsinline style="width:100%;height:100%;object-fit:cover"></video>' :
-                  item.emoji;
-    return '<div class="ci"><div class="ci-img" style="background:'+bg+'">'+imgHtml+'</div>' +
-      '<div class="ci-info"><div class="ci-name">'+item.name+'</div>' +
-      '<div class="ci-meta">Size: '+item.size+' · Colour: '+item.colour+'</div>' +
-      '<div class="ci-price">GH₵'+item.price+'</div>' +
-      '<div class="ci-qty"><button class="qb" onclick="chQty(\''+item.key+'\',-1)">−</button>' +
-      '<span class="qn">'+item.qty+'</span>' +
-      '<button class="qb" onclick="chQty(\''+item.key+'\',1)">+</button>' +
-      '<button class="rm" onclick="rmItem(\''+item.key+'\')">Remove</button></div></div></div>';
+  c.innerHTML=cart.map(item=>{
+    const bg=BGS[item.cat]||BGS.top;
+    let imgHtml=item.photo?'<img src="'+item.photo+'" alt="'+item.name+'" style="width:100%;height:100%;object-fit:cover">':
+                item.video?'<video src="'+item.video+'" muted autoplay loop playsinline style="width:100%;height:100%;object-fit:cover"></video>':item.emoji;
+    return '<div class="ci"><div class="ci-img" style="background:'+bg+'">'+imgHtml+'</div>'+
+      '<div class="ci-info"><div class="ci-name">'+item.name+'</div>'+
+      '<div class="ci-meta">Size: '+item.size+' · Colour: '+item.colour+'</div>'+
+      '<div class="ci-price">GH₵'+item.price+'</div>'+
+      '<div class="ci-qty"><button class="qb" data-key="'+item.key+'" data-d="-1" onclick="chQty(this.dataset.key,parseInt(this.dataset.d))">−</button>'+
+      '<span class="qn">'+item.qty+'</span>'+
+      '<button class="qb" data-key="'+item.key+'" data-d="1" onclick="chQty(this.dataset.key,parseInt(this.dataset.d))">+</button>'+
+      '<button class="rm" data-key="'+item.key+'" onclick="rmItem(this.dataset.key)">Remove</button></div></div></div>';
   }).join('');
   refreshTotals();
 }
 
 function refreshTotals() {
-  const sub = cart.reduce((s,i) => s+i.price*i.qty, 0);
-  const disc = Math.round(sub*discountPct/100);
-  const total = sub-disc;
-  document.getElementById('cSub').textContent = 'GH₵'+sub;
-  document.getElementById('cTotal').textContent = 'GH₵'+total;
-  const dl = document.getElementById('discountLine');
-  if (discountPct>0) { dl.style.display='block'; dl.textContent='✓ '+appliedPromo+' — '+discountPct+'% off (−GH₵'+disc+')'; }
+  const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100), total=sub-disc;
+  document.getElementById('cSub').textContent='GH₵'+sub;
+  document.getElementById('cTotal').textContent='GH₵'+total;
+  const dl=document.getElementById('discountLine');
+  if(discountPct>0){ dl.style.display='block'; dl.textContent='✓ '+appliedPromo+' — '+discountPct+'% off (−GH₵'+disc+')'; }
   else dl.style.display='none';
 }
-
-function chQty(key, d) {
-  const i = cart.find(c => c.key===key); if (!i) return;
-  i.qty+=d; if (i.qty<=0) cart=cart.filter(c=>c.key!==key);
-  updateCC(); renderCart();
-}
-function rmItem(key) { cart=cart.filter(c=>c.key!==key); updateCC(); renderCart(); }
+function chQty(key,d){ const i=cart.find(c=>c.key===key); if(!i) return; i.qty+=d; if(i.qty<=0) cart=cart.filter(c=>c.key!==key); updateCC(); renderCart(); }
+function rmItem(key){ cart=cart.filter(c=>c.key!==key); updateCC(); renderCart(); }
 
 function applyPromo() {
-  const code = document.getElementById('promoInput').value.trim().toUpperCase();
-  if (!code) { toast('Enter a promo code'); return; }
-  if (PROMOS[code]) { discountPct=PROMOS[code]; appliedPromo=code; refreshTotals(); toast(code+' applied — '+discountPct+'% off!'); }
+  const code=document.getElementById('promoInput').value.trim().toUpperCase();
+  if(!code){ toast('Enter a promo code'); return; }
+  if(PROMOS[code]){ discountPct=PROMOS[code]; appliedPromo=code; refreshTotals(); toast(code+' applied — '+discountPct+'% off!'); }
   else toast('Invalid promo code');
 }
 
 function cartWA() {
-  const items = cart.map(i => i.emoji+' '+i.name+' ×'+i.qty+' (Size '+i.size+', '+i.colour+') — GH₵'+(i.price*i.qty)).join('\n');
+  const items=cart.map(i=>i.emoji+' '+i.name+' ×'+i.qty+' (Size '+i.size+', '+i.colour+') — GH₵'+(i.price*i.qty)).join('\n');
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100), total=sub-disc;
-  openWA('Hi! I\'d like to order from TinaSelect:\n\n'+items+(appliedPromo?'\nPromo: '+appliedPromo+' ('+discountPct+'% off)':'')+'\n\nTotal: GH₵'+total+'\n(Delivery fee to be confirmed)');
+  openWA('Hi! I would like to order from TinaSelect:\n\n'+items+(appliedPromo?'\nPromo: '+appliedPromo+' ('+discountPct+'% off)':'')+' \n\nTotal: GH₵'+total+'\n(Delivery fee to be confirmed)');
 }
 
 // ═══════════════════════════════════════════════
@@ -1534,66 +1339,62 @@ function cartWA() {
 // ═══════════════════════════════════════════════
 function buildOSum() {
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100), total=sub-disc;
-  const rows = cart.map(i=>'<div class="osr"><span>'+i.emoji+' '+i.name+' ×'+i.qty+'</span><span>GH₵'+(i.price*i.qty)+'</span></div>').join('');
-  const promoRow = disc>0 ? '<div class="osr"><span>Promo ('+appliedPromo+')</span><span>−GH₵'+disc+'</span></div>' : '';
+  const rows=cart.map(i=>'<div class="osr"><span>'+i.emoji+' '+i.name+' ×'+i.qty+'</span><span>GH₵'+(i.price*i.qty)+'</span></div>').join('');
+  const promoRow=disc>0?'<div class="osr"><span>Promo ('+appliedPromo+')</span><span>−GH₵'+disc+'</span></div>':'';
   return rows+promoRow+'<div class="osr"><span>Delivery</span><span>Paid separately</span></div><div class="ost"><span>Total</span><span>GH₵'+total+'</span></div>';
 }
 
 function openCheckout() {
-  if (!cart.length) { toast('Your cart is empty'); return; }
+  if(!cart.length){ toast('Your cart is empty'); return; }
   closeCart();
-  document.getElementById('oSum1').innerHTML = buildOSum();
+  document.getElementById('oSum1').innerHTML=buildOSum();
   goStep(1);
   document.getElementById('checkoutModal').classList.add('open');
 }
-function closeCheckout() { document.getElementById('checkoutModal').classList.remove('open'); }
-function closeAll() { closeCheckout(); closeCart(); showPage('shop'); }
+function closeCheckout(){ document.getElementById('checkoutModal').classList.remove('open'); }
+function closeAll(){ closeCheckout(); closeCart(); showPage('shop'); }
 
 function goStep(n) {
-  [1,2,3].forEach(i => {
+  [1,2,3].forEach(i=>{
     document.getElementById('payStep'+i).classList.toggle('active',i===n);
     const s=document.getElementById('step'+i); s.classList.remove('active','done');
-    if(i<n)s.classList.add('done'); if(i===n)s.classList.add('active');
+    if(i<n) s.classList.add('done'); if(i===n) s.classList.add('active');
   });
   const titles={1:'Complete Your Order',2:'Secure Payment',3:'Confirming...'};
-  document.getElementById('modalTitle').textContent = titles[n]||'Checkout';
+  document.getElementById('modalTitle').textContent=titles[n]||'Checkout';
 }
 
 function goStep2() {
   const name=document.getElementById('cusName').value.trim();
   const phone=document.getElementById('cusPhone').value.trim();
   const addr=document.getElementById('cusAddr').value.trim();
-  if(!name||!phone||!addr){toast('Please fill in Name, Phone and Address');return;}
-  document.getElementById('oSum2').innerHTML = buildOSum();
+  if(!name||!phone||!addr){ toast('Please fill in Name, Phone and Address'); return; }
+  document.getElementById('oSum2').innerHTML=buildOSum();
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100);
-  document.getElementById('payAmt').textContent = sub-disc;
+  document.getElementById('payAmt').textContent=sub-disc;
   goStep(2);
 }
 
 function initiatePaystack() {
-  const email = document.getElementById('cusEmail').value.trim()||'order@tinaselect.com';
+  const email=document.getElementById('cusEmail').value.trim()||'order@tinaselect.com';
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100), total=(sub-disc)*100;
-
-  function runPaystack() {
-    const handler = PaystackPop.setup({
-      key: PAYSTACK_KEY, email, amount: total, currency:'GHS',
+  function runPaystack(){
+    const handler=PaystackPop.setup({
+      key:PAYSTACK_KEY, email, amount:total, currency:'GHS',
       channels:['mobile_money','card','bank_transfer'],
-      callback: r => confirmOrder(r.reference),
-      onClose: () => toast('Payment cancelled')
+      callback:r=>confirmOrder(r.reference),
+      onClose:()=>toast('Payment cancelled')
     });
     handler.openIframe();
   }
-
-  // If Paystack already loaded, run immediately
-  if (typeof PaystackPop !== 'undefined') { runPaystack(); return; }
-
-  // Otherwise load the script on demand then run
-  const s = document.createElement('script');
-  s.src = 'https://js.paystack.co/v1/inline.js';
-  s.onload = runPaystack;
-  s.onerror = () => toast('Payment failed to load. Please check your connection.');
+  if(typeof PaystackPop!=='undefined'){ runPaystack(); return; }
+  const s=document.createElement('script');
+  s.src='https://js.paystack.co/v1/inline.js';
+  s.onload=runPaystack;
+  s.onerror=()=>toast('Payment failed to load. Please check your connection.');
   document.head.appendChild(s);
 }
+
 
 function confirmOrder(ref) {
   const orderRef = '#TS-'+Math.floor(1000+Math.random()*9000);
@@ -1603,32 +1404,28 @@ function confirmOrder(ref) {
   const name=document.getElementById('cusName').value, phone=document.getElementById('cusPhone').value;
   const addr=document.getElementById('cusAddr').value, note=document.getElementById('cusNote').value;
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100), total=sub-disc;
-  const itemsList=cart.map(i=>i.emoji+' '+i.name+' ×'+i.qty+' (Size '+i.size+', '+i.colour+')').join(', ');
-  const now = new Date();
+  const itemsList=cart.map(i=>i.emoji+' '+i.name+' x'+i.qty+' (Size '+i.size+', '+i.colour+')').join(', ');
+  const now=new Date();
   const order={
     ref:orderRef, paystackRef:ref, name, phone, addr, note,
     items:cart.map(i=>({name:i.name,qty:i.qty,size:i.size,colour:i.colour,price:i.price,emoji:i.emoji,photo:i.photo||null})),
     promo:appliedPromo, discount:disc, total, status:'pending',
-    timestamp: now.toISOString(),
-    date: now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+    timestamp:now.toISOString(),
+    date:now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
   };
   saveOrder(order);
-  cloudSaveOrder(order);
-  setTimeout(() => {
+  setTimeout(()=>{
     document.getElementById('procBox').style.display='none';
     document.getElementById('sucBox').style.display='block';
     document.getElementById('oRef').textContent=orderRef;
-    document.getElementById('modalTitle').textContent='Payment Confirmed! 🎉';
-    const waMsg='🎉 *New TinaSelect Order '+orderRef+'*\n\nCustomer: '+name+'\nPhone: '+phone+'\nAddress: '+addr+'\nItems: '+itemsList+(note?'\nNote: '+note:'')+(appliedPromo?'\nPromo: '+appliedPromo+' ('+discountPct+'% off)':'')+'\nTotal: GH₵'+total+'\n\nPayment: Paystack CONFIRMED (Ref: '+ref+')\n\nReply to contact customer.';
+    document.getElementById('modalTitle').textContent='Payment Confirmed!';
+    const waMsg='New TinaSelect Order '+orderRef+'\n\nCustomer: '+name+'\nPhone: '+phone+'\nAddress: '+addr+'\nItems: '+itemsList+(note?'\nNote: '+note:'')+(appliedPromo?'\nPromo: '+appliedPromo+' ('+discountPct+'% off)':'')+'\nTotal: GH\u20b5'+total+'\n\nPaystack Ref: '+ref;
     setTimeout(()=>openWA(waMsg),1500);
     cart=[]; updateCC(); discountPct=0; appliedPromo='';
     document.getElementById('promoInput').value='';
-  }, 2500);
+  },2500);
 }
 
-// ═══════════════════════════════════════════════
-// TRACK ORDER
-// ═══════════════════════════════════════════════
 function trackOrder() {
   const ref=document.getElementById('trackInput').value.trim().toUpperCase();
   if(!ref){toast('Please enter an order reference');return;}
@@ -1637,72 +1434,176 @@ function trackOrder() {
   const el=document.getElementById('trackResult');
   if(order){
     el.className='track-result show';
-    el.innerHTML='<div class="track-id">'+order.ref+'</div><div style="font-size:13px;color:var(--muted)">Placed on '+order.date+'</div><div class="track-pill">📦 '+(order.status||'Processing')+'</div><div class="track-items">'+(order.items?order.items.map(i=>i.name+' ×'+i.qty+' (Size '+i.size+', '+i.colour+')').join('<br>'):'Items unavailable')+'</div><div class="track-total">Total: GH₵'+order.total+'</div><p style="font-size:13px;color:var(--muted);margin-top:14px">🚚 4–6 working days · <span style="color:var(--rose-dk);cursor:pointer" onclick="openWA(\'Hi! Update on order '+order.ref+'?\')">WhatsApp us</span></p>';
+    el.innerHTML='<div class="track-id">'+order.ref+'</div><div style="font-size:13px;color:var(--muted)">Placed on '+order.date+'</div><div class="track-pill">'+( order.status||'Processing')+'</div><div class="track-items">'+(order.items?order.items.map(i=>i.name+' x'+i.qty+' (Size '+i.size+', '+i.colour+')').join('<br>'):'')+'</div><div class="track-total">Total: GH₵'+order.total+'</div>';
   } else {
     el.className='track-result show';
-    el.innerHTML='<p style="font-size:14px;color:var(--muted)">Order <strong>'+ref+'</strong> not found. May take a few minutes after payment. <span style="color:var(--rose-dk);cursor:pointer" onclick="openWA(\'Hi! Help finding order '+ref+'\')">WhatsApp us</span>.</p>';
+    el.innerHTML='<p style="font-size:14px;color:var(--muted)">Order <strong>'+ref+'</strong> not found. May take a few minutes after payment.</p>';
   }
 }
 
-// ═══════════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════════
 function checkDashPass() {
-  if(document.getElementById('dashPwInput').value===DASH_PASSWORD){
-    dashUnlocked=true;
-    document.getElementById('dashPwInput').value='';
-    showPage('dashboard');
-  } else { showDashToast('Incorrect password'); }
+  const pw=document.getElementById('dashPwInput').value;
+  if(pw===DASH_PASSWORD){ dashUnlocked=true; document.getElementById('dashPwInput').value=''; showPage('dashboard'); }
+  else showDashToast('Incorrect password');
 }
 
-function switchDash(tab, el) {
-  ['overview','orders','inventory','promos'].forEach(t => { document.getElementById('dash-'+t).style.display='none'; });
+function switchDash(tab,el) {
+  ['overview','orders','inventory','promos'].forEach(t=>{ document.getElementById('dash-'+t).style.display='none'; });
   document.getElementById('dash-'+tab).style.display='block';
   document.querySelectorAll('.dn-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  if(tab==='orders')renderOrders();
-  if(tab==='inventory')renderInventory();
+  if(tab==='orders') renderOrders();
+  if(tab==='inventory') renderInventory();
 }
 
+function openWA(msg){ window.open('https://wa.me/'+PHONE+'?text='+encodeURIComponent(msg),'_blank'); }
+
+function toast(msg) {
+  const active=document.querySelector('.page.active');
+  if(active&&(active.id==='page-dashboard'||active.id==='page-dash-login')) return;
+  showToastEl(msg);
+}
+function showDashToast(msg){ showToastEl(msg); }
+function showToastEl(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+function showSync(msg){
+  const b=document.getElementById('syncBadge');
+  b.textContent=msg; b.style.opacity='1';
+  clearTimeout(b._t); b._t=setTimeout(()=>b.style.opacity='0',2500);
+}
+
+
+
+// ═══════════════════════════════════════════════
+// ORDER STORAGE — localStorage + GitHub sync
+// ═══════════════════════════════════════════════
+
+function saveOrder(order) {
+  try {
+    const orders = JSON.parse(localStorage.getItem('ts_orders') || '[]');
+    if (!orders.find(o => o.ref === order.ref)) orders.unshift(order);
+    localStorage.setItem('ts_orders', JSON.stringify(orders));
+    allOrders = orders;
+  } catch(e) {}
+  pushOrderToGitHub(order); // sync to cloud
+}
+
+function loadOrders() {
+  try { allOrders = JSON.parse(localStorage.getItem('ts_orders') || '[]'); }
+  catch(e) { allOrders = []; }
+}
+
+async function loadOrdersFromCloud() {
+  try {
+    const res = await fetch(ORDERS_URL + '?t=' + Date.now());
+    if (!res.ok) return;
+    const cloud = await res.json();
+    if (!Array.isArray(cloud) || !cloud.length) return;
+    // Merge: add any cloud orders missing locally
+    const localRefs = new Set(allOrders.map(o => o.ref));
+    cloud.forEach(o => { if (!localRefs.has(o.ref)) allOrders.push(o); });
+    allOrders.sort((a, b) => new Date(b.timestamp||0) - new Date(a.timestamp||0));
+    try { localStorage.setItem('ts_orders', JSON.stringify(allOrders)); } catch(e) {}
+  } catch(e) { console.warn('Orders cloud fetch failed:', e.message); }
+}
+
+async function pushOrderToGitHub(newOrder) {
+  try {
+    let existing = [], sha = null;
+    try {
+      const r = await fetch(GITHUB_ORDERS_API, {
+        headers: {'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json'}
+      });
+      if (r.ok) {
+        const d = await r.json();
+        sha = d.sha;
+        existing = JSON.parse(decodeURIComponent(escape(atob(d.content.split('\n').join('')))));
+      }
+    } catch(e) {}
+    if (!existing.find(o => o.ref === newOrder.ref)) existing.unshift(newOrder);
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2))));
+    await fetch(GITHUB_ORDERS_API, {
+      method: 'PUT',
+      headers: {'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body: JSON.stringify({message:'New order '+newOrder.ref, content:encoded, ...(sha?{sha}:{})})
+    });
+  } catch(e) { console.warn('Order push failed:', e.message); }
+}
+
+async function cloudSaveOrder(order) {} // saveOrder already calls pushOrderToGitHub
+
+async function saveOrderStatus(ref, status) {
+  try {
+    const r = await fetch(GITHUB_ORDERS_API, {
+      headers: {'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json'}
+    });
+    if (!r.ok) return;
+    const d = await r.json();
+    const orders = JSON.parse(decodeURIComponent(escape(atob(d.content.split('\n').join('')))));
+    const o = orders.find(x => x.ref === ref);
+    if (o) o.status = status;
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
+    await fetch(GITHUB_ORDERS_API, {
+      method:'PUT',
+      headers:{'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:'Status '+ref+' → '+status, content:encoded, sha:d.sha})
+    });
+  } catch(e) { console.warn('Status save failed:', e.message); }
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD KPIs
+// ═══════════════════════════════════════════════
 function renderDashKPIs() {
-
   loadOrders();
-  const inStock=products.filter(p=>p.inStock!==false).length;
-  const outStock=products.filter(p=>p.inStock===false).length;
-  const rev=allOrders.reduce((s,o)=>s+(o.total||0),0);
-  const avg=allOrders.length?Math.round(rev/allOrders.length):0;
-  document.getElementById('kpiRevenue').textContent='GH₵'+rev;
-  document.getElementById('kpiOrders').textContent=allOrders.length;
-  document.getElementById('kpiProds').textContent=products.length;
-  document.getElementById('kpiStock').textContent=inStock;
-  document.getElementById('kpiOut').textContent=outStock;
-  document.getElementById('kpiAvg').textContent='GH₵'+avg;
+  const inStock  = products.filter(p => p.inStock !== false).length;
+  const outStock = products.filter(p => p.inStock === false).length;
+  const rev = allOrders.reduce((s, o) => s + (o.total||0), 0);
+  const avg = allOrders.length ? Math.round(rev / allOrders.length) : 0;
+  document.getElementById('kpiRevenue').textContent = 'GH₵' + rev;
+  document.getElementById('kpiOrders').textContent  = allOrders.length;
+  document.getElementById('kpiProds').textContent   = products.length;
+  document.getElementById('kpiStock').textContent   = inStock;
+  document.getElementById('kpiOut').textContent     = outStock;
+  document.getElementById('kpiAvg').textContent     = 'GH₵' + avg;
+  // Refresh KPI numbers after cloud orders load
+  loadOrdersFromCloud().then(() => {
+    const rev2 = allOrders.reduce((s,o) => s+(o.total||0), 0);
+    const avg2 = allOrders.length ? Math.round(rev2/allOrders.length) : 0;
+    document.getElementById('kpiRevenue').textContent = 'GH₵'+rev2;
+    document.getElementById('kpiOrders').textContent  = allOrders.length;
+    document.getElementById('kpiAvg').textContent     = 'GH₵'+avg2;
+  });
 }
 
+// ═══════════════════════════════════════════════
+// ORDERS RENDERING
+// ═══════════════════════════════════════════════
 function renderOrders() {
   loadOrders();
   const body = document.getElementById('ordersBody');
-  // Show what we have locally, then refresh from cloud
-  _renderOrderCards(body);
-  loadOrdersFromCloud().then(() => { _renderOrderCards(body); renderDashKPIs_display(); });
+  renderOrderCards(body); // show local immediately
+  loadOrdersFromCloud().then(() => renderOrderCards(body)); // then refresh from cloud
 }
 
-function _renderOrderCards(body) {
+function renderOrderCards(body) {
   if (!allOrders.length) {
     body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:14px">No orders yet. Orders will appear here after customers pay.</div>';
     return;
   }
-  // Sort newest first
-  const sorted = [...allOrders].sort((a,b) => new Date(b.timestamp||b.date||0) - new Date(a.timestamp||a.date||0));
+  const sorted = [...allOrders].sort((a,b) => new Date(b.timestamp||0) - new Date(a.timestamp||0));
   body.innerHTML = sorted.map(o => buildOrderCard(o)).join('');
 }
 
 function buildOrderCard(o) {
   const status = o.status || 'pending';
-  const phone = (o.phone || '').replace(/^0/, '');
-  const waText = 'Hi ' + (o.name||'') + '! Your TinaSelect order ' + (o.ref||'') + ' is being processed. We will deliver within 4-6 working days. Thank you!';
+  const phone  = (o.phone || '').replace(/^0/, '');
+  const waMsg  = 'Hi ' + (o.name||'') + '! Your TinaSelect order ' + (o.ref||'') + ' is being processed and will be delivered within 4-6 working days. Thank you for shopping with us! 🛍';
 
-  // Items
+  // Product items
   let itemsHtml = '';
   (o.items || []).forEach(item => {
     const img = item.photo
@@ -1712,49 +1613,50 @@ function buildOrderCard(o) {
       '<div class="order-item">' +
         '<div class="order-item-img">' + img + '</div>' +
         '<div>' +
-          '<div class="order-item-name">' + item.name + '</div>' +
-          '<div class="order-item-meta">Size: ' + (item.size||'—') + ' · Colour: ' + (item.colour||'—') + ' · Qty: ' + (item.qty||1) + '</div>' +
-          '<div class="order-item-price">GH₵' + (item.price * (item.qty||1)) + '</div>' +
+          '<div class="order-item-name">' + (item.name||'') + '</div>' +
+          '<div class="order-item-meta">Size: ' + (item.size||'—') + ' &nbsp;·&nbsp; Colour: ' + (item.colour||'—') + ' &nbsp;·&nbsp; Qty: ' + (item.qty||1) + '</div>' +
+          '<div class="order-item-price">GH₵' + ((item.price||0) * (item.qty||1)) + '</div>' +
         '</div>' +
       '</div>';
   });
 
-  // Status dropdown
-  const statuses = ['pending','processing','delivered','cancelled'];
+  // Status dropdown options
   let opts = '';
-  statuses.forEach(s => {
-    opts += '<option value="' + s + '"' + (s === status ? ' selected' : '') + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>';
+  ['pending','processing','delivered','cancelled'].forEach(s => {
+    opts += '<option value="' + s + '"' + (s===status?' selected':'') + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>';
   });
 
-  return '<div class="order-card">' +
-    '<div class="order-card-top">' +
-      '<div>' +
-        '<div class="order-ref">' + (o.ref||'—') + '</div>' +
-        '<div class="order-date">📅 ' + (o.date||'—') + '</div>' +
+  return (
+    '<div class="order-card">' +
+      '<div class="order-card-top">' +
+        '<div>' +
+          '<div class="order-ref">' + (o.ref||'—') + '</div>' +
+          '<div class="order-date">📅 ' + (o.date||'—') + '</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+          '<span class="ostatus st-' + status + '">' + status + '</span>' +
+          '<select data-ref="' + (o.ref||'') + '" onchange="updateOrderStatus(this.dataset.ref,this.value)" style="border:1px solid var(--border);background:var(--card);border-radius:5px;padding:5px 8px;font-family:Jost,sans-serif;font-size:12px;outline:none;cursor:pointer">' + opts + '</select>' +
+        '</div>' +
       '</div>' +
-      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-        '<span class="ostatus st-' + status + '">' + status + '</span>' +
-        '<select data-ref="' + (o.ref||'') + '" onchange="updateOrderStatus(this.dataset.ref,this.value)" style="border:1px solid var(--border);background:var(--card);border-radius:5px;padding:5px 8px;font-family:Jost,sans-serif;font-size:12px;outline:none;cursor:pointer">' + opts + '</select>' +
+
+      '<div class="order-info-grid">' +
+        '<div class="order-info-box"><div class="order-info-label">👤 Customer</div><div class="order-info-val">' + (o.name||'—') + '</div></div>' +
+        '<div class="order-info-box"><div class="order-info-label">📞 Phone</div><div class="order-info-val" style="color:var(--rose-dk);font-weight:500">' + (o.phone||'—') + '</div></div>' +
+        '<div class="order-info-box"><div class="order-info-label">💰 Total Paid</div><div class="order-info-val" style="color:var(--rose-dk);font-size:16px;font-weight:600">GH₵' + (o.total||0) + '</div></div>' +
+        '<div class="order-info-box" style="grid-column:span 2"><div class="order-info-label">📍 Delivery Address</div><div class="order-info-val">' + (o.addr||'—') + '</div></div>' +
+        (o.note ? '<div class="order-info-box"><div class="order-info-label">📝 Note</div><div class="order-info-val">' + o.note + '</div></div>' : '') +
+        (o.paystackRef ? '<div class="order-info-box"><div class="order-info-label">🧾 Paystack Ref</div><div class="order-info-val" style="font-size:11px;word-break:break-all">' + o.paystackRef + '</div></div>' : '') +
       '</div>' +
-    '</div>' +
 
-    '<div class="order-info-grid">' +
-      '<div class="order-info-box"><div class="order-info-label">👤 Customer</div><div class="order-info-val">' + (o.name||'—') + '</div></div>' +
-      '<div class="order-info-box"><div class="order-info-label">📞 Phone</div><div class="order-info-val" style="color:var(--rose-dk);font-weight:500">' + (o.phone||'—') + '</div></div>' +
-      '<div class="order-info-box"><div class="order-info-label">💰 Total Paid</div><div class="order-info-val" style="color:var(--rose-dk);font-size:16px;font-weight:600">GH₵' + (o.total||0) + '</div></div>' +
-      '<div class="order-info-box" style="grid-column:span 2"><div class="order-info-label">📍 Delivery Address</div><div class="order-info-val">' + (o.addr||'—') + '</div></div>' +
-      (o.note ? '<div class="order-info-box"><div class="order-info-label">📝 Note</div><div class="order-info-val">' + o.note + '</div></div>' : '') +
-      (o.paystackRef ? '<div class="order-info-box"><div class="order-info-label">🧾 Paystack Ref</div><div class="order-info-val" style="font-size:11px;word-break:break-all">' + o.paystackRef + '</div></div>' : '') +
-    '</div>' +
+      '<div class="order-items-title">🛍 Items Ordered</div>' +
+      '<div class="order-items-list">' + itemsHtml + '</div>' +
 
-    '<div class="order-items-title">🛍 Items Ordered</div>' +
-    '<div class="order-items-list">' + itemsHtml + '</div>' +
-
-    '<div class="order-actions">' +
-      '<a href="https://wa.me/233' + phone + '?text=' + encodeURIComponent(waText) + '" target="_blank" style="text-decoration:none"><button class="order-act-btn wa">💬 WhatsApp Customer</button></a>' +
-      '<a href="tel:+233' + phone + '" style="text-decoration:none"><button class="order-act-btn">📞 Call Customer</button></a>' +
-    '</div>' +
-  '</div>';
+      '<div class="order-actions">' +
+        '<a href="https://wa.me/233' + phone + '?text=' + encodeURIComponent(waMsg) + '" target="_blank" style="text-decoration:none"><button class="order-act-btn wa">💬 WhatsApp Customer</button></a>' +
+        '<a href="tel:+233' + phone + '" style="text-decoration:none"><button class="order-act-btn">📞 Call Customer</button></a>' +
+      '</div>' +
+    '</div>'
+  );
 }
 
 function updateOrderStatus(ref, newStatus) {
@@ -1762,11 +1664,11 @@ function updateOrderStatus(ref, newStatus) {
   if (!order) return;
   order.status = newStatus;
   try { localStorage.setItem('ts_orders', JSON.stringify(allOrders)); } catch(e) {}
-  renderOrders();
-  renderDashKPIs();
+  renderOrderCards(document.getElementById('ordersBody'));
   saveOrderStatus(ref, newStatus);
   showDashToast('Order ' + ref + ' marked as ' + newStatus);
 }
+
 
 function renderTopItems() {
   document.getElementById('topItemsDiv').innerHTML=products.slice(0,5).map((p,i)=>
