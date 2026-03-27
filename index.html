@@ -891,9 +891,12 @@ const DASH_PASSWORD = 'Tina@68';
 const GITHUB_USER = 'Evanz-DataHub';
 const GITHUB_REPO = 'tinaselect.store';
 const GITHUB_TOKEN = ['ghp_Hfj6','I736xtMKq9H8','vAUJzVwBSIe1t13hzAW4'].join('');
-const GITHUB_FILE = 'products.json';
-const GITHUB_API  = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE;
-const PRODUCTS_URL = 'https://' + GITHUB_USER + '.github.io/' + GITHUB_REPO + '/products.json';
+const GITHUB_FILE   = 'products.json';
+const GITHUB_ORDERS = 'orders.json';
+const GITHUB_API    = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE;
+const GITHUB_ORDERS_API = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/contents/' + GITHUB_ORDERS;
+const PRODUCTS_URL  = 'https://' + GITHUB_USER + '.github.io/' + GITHUB_REPO + '/products.json';
+const ORDERS_URL    = 'https://' + GITHUB_USER + '.github.io/' + GITHUB_REPO + '/orders.json';
 const PROMOS = { TINA10:10, TINA20:20, NEWCUST:15 };
 const SIZES = [6,8,10,12,14,16,18,20];
 const BGS = { dress:'linear-gradient(160deg,#F9EDE8,#F0D5CC)', palazzo:'linear-gradient(160deg,#EDE8F9,#D5CCF0)', twopiece:'linear-gradient(160deg,#E8F9ED,#CCF0D9)', top:'linear-gradient(160deg,#F5EFE6,#E8DDD4)', crop:'linear-gradient(160deg,#FFF0E8,#F0D4C4)' };
@@ -1014,16 +1017,91 @@ function loadLocal() {
 
 function saveOrder(order) {
   try {
+    // Save locally first (instant)
     const orders = JSON.parse(localStorage.getItem('ts_orders') || '[]');
-    orders.unshift(order);
+    // Avoid duplicate refs
+    const exists = orders.find(o => o.ref === order.ref);
+    if (!exists) orders.unshift(order);
     localStorage.setItem('ts_orders', JSON.stringify(orders));
     allOrders = orders;
   } catch(e) {}
+  // Push to GitHub so all devices see it
+  pushOrderToGitHub(order);
 }
 
 function loadOrders() {
+  // Load from localStorage first
   try { allOrders = JSON.parse(localStorage.getItem('ts_orders') || '[]'); }
   catch(e) { allOrders = []; }
+}
+
+async function loadOrdersFromCloud() {
+  // Fetch all orders from GitHub — works on any device
+  try {
+    const res = await fetch(ORDERS_URL + '?t=' + Date.now());
+    if (!res.ok) return;
+    const cloud = await res.json();
+    if (!Array.isArray(cloud)) return;
+    // Merge with local orders (avoid duplicates, keep all)
+    const localRefs = new Set(allOrders.map(o => o.ref));
+    cloud.forEach(o => { if (!localRefs.has(o.ref)) allOrders.push(o); });
+    // Sort newest first
+    allOrders.sort((a, b) => new Date(b.timestamp||0) - new Date(a.timestamp||0));
+    // Save merged back to local
+    try { localStorage.setItem('ts_orders', JSON.stringify(allOrders)); } catch(e) {}
+  } catch(e) { console.warn('Orders cloud load failed:', e.message); }
+}
+
+async function pushOrderToGitHub(newOrder) {
+  // Pull existing orders.json, add new order, push back
+  try {
+    let existingOrders = [];
+    let sha = null;
+    // Get current orders.json
+    try {
+      const check = await fetch(GITHUB_ORDERS_API, {
+        headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (check.ok) {
+        const data = await check.json();
+        sha = data.sha;
+        const decoded = decodeURIComponent(escape(atob(data.content.split('\n').join(''))));
+        existingOrders = JSON.parse(decoded);
+      }
+    } catch(e) {}
+    // Add new order, avoid duplicates
+    const exists = existingOrders.find(o => o.ref === newOrder.ref);
+    if (!exists) existingOrders.unshift(newOrder);
+    // Push updated orders
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(existingOrders, null, 2))));
+    const body = { message: 'New order ' + newOrder.ref, content: encoded, ...(sha ? {sha} : {}) };
+    await fetch(GITHUB_ORDERS_API, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch(e) { console.warn('Order push to GitHub failed:', e.message); }
+}
+
+async function saveOrderStatus(ref, status) {
+  // Update status in both local and GitHub
+  try {
+    const check = await fetch(GITHUB_ORDERS_API, {
+      headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!check.ok) return;
+    const data = await check.json();
+    const decoded = decodeURIComponent(escape(atob(data.content.split('\n').join(''))));
+    const orders = JSON.parse(decoded);
+    const o = orders.find(x => x.ref === ref);
+    if (o) o.status = status;
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
+    await fetch(GITHUB_ORDERS_API, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Update order status ' + ref, content: encoded, sha: data.sha })
+    });
+  } catch(e) {}
 }
 
 // ═══════════════════════════════════════════════
@@ -1128,7 +1206,7 @@ async function syncAllToCloud() {
 
 async function cloudSaveProduct(p) { await syncAllToCloud(); }
 async function cloudDeleteProduct(id) { await syncAllToCloud(); }
-async function cloudSaveOrder(order) {}
+async function cloudSaveOrder(order) { await pushOrderToGitHub(order); }
 
 // ═══════════════════════════════════════════════
 // IMAGE COMPRESSION
@@ -1526,7 +1604,14 @@ function confirmOrder(ref) {
   const addr=document.getElementById('cusAddr').value, note=document.getElementById('cusNote').value;
   const sub=cart.reduce((s,i)=>s+i.price*i.qty,0), disc=Math.round(sub*discountPct/100), total=sub-disc;
   const itemsList=cart.map(i=>i.emoji+' '+i.name+' ×'+i.qty+' (Size '+i.size+', '+i.colour+')').join(', ');
-  const order={ref:orderRef,paystackRef:ref,name,phone,addr,note,items:cart.map(i=>({name:i.name,qty:i.qty,size:i.size,colour:i.colour,price:i.price,emoji:i.emoji,photo:i.photo||null})),promo:appliedPromo,discount:disc,total,status:'pending',date:new Date().toLocaleDateString('en-GB')};
+  const now = new Date();
+  const order={
+    ref:orderRef, paystackRef:ref, name, phone, addr, note,
+    items:cart.map(i=>({name:i.name,qty:i.qty,size:i.size,colour:i.colour,price:i.price,emoji:i.emoji,photo:i.photo||null})),
+    promo:appliedPromo, discount:disc, total, status:'pending',
+    timestamp: now.toISOString(),
+    date: now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+  };
   saveOrder(order);
   cloudSaveOrder(order);
   setTimeout(() => {
@@ -1597,11 +1682,19 @@ function renderDashKPIs() {
 function renderOrders() {
   loadOrders();
   const body = document.getElementById('ordersBody');
+  // Show what we have locally, then refresh from cloud
+  _renderOrderCards(body);
+  loadOrdersFromCloud().then(() => { _renderOrderCards(body); renderDashKPIs_display(); });
+}
+
+function _renderOrderCards(body) {
   if (!allOrders.length) {
     body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:14px">No orders yet. Orders will appear here after customers pay.</div>';
     return;
   }
-  body.innerHTML = allOrders.map(o => buildOrderCard(o)).join('');
+  // Sort newest first
+  const sorted = [...allOrders].sort((a,b) => new Date(b.timestamp||b.date||0) - new Date(a.timestamp||a.date||0));
+  body.innerHTML = sorted.map(o => buildOrderCard(o)).join('');
 }
 
 function buildOrderCard(o) {
@@ -1668,10 +1761,11 @@ function updateOrderStatus(ref, newStatus) {
   const order = allOrders.find(o => o.ref === ref);
   if (!order) return;
   order.status = newStatus;
-  // Save updated orders
   try { localStorage.setItem('ts_orders', JSON.stringify(allOrders)); } catch(e) {}
   renderOrders();
-  showDashToast('Order '+ref+' marked as '+newStatus);
+  renderDashKPIs();
+  saveOrderStatus(ref, newStatus);
+  showDashToast('Order ' + ref + ' marked as ' + newStatus);
 }
 
 function renderTopItems() {
