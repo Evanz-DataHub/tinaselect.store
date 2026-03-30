@@ -700,13 +700,19 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
   </div>
   <div class="dash-body">
     <div id="dash-overview">
-      <div style="background:#EFF8EF;border:1px solid #5A7A5A;border-radius:10px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div>
-          <div style="font-size:15px;font-weight:500;color:#065F46;margin-bottom:4px">🔄 Auto-sync to GitHub is active</div>
-          <div style="font-size:13px;color:#065F46">Every product change pushes to GitHub automatically. Customers see updates within ~60 seconds.</div>
-        </div>
-        <button onclick="syncAllToCloud()" style="background:#5A7A5A;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-family:'Jost',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">🔄 Push changes now</button>
-      </div>
+      <div id="syncBannerWrap" style="margin-bottom:24px"></div>
+      <script>
+      (function setupSyncBanner(){
+        const token = localStorage.getItem('ts_gh_token');
+        const wrap = document.getElementById('syncBannerWrap');
+        if (!wrap) return;
+        if (token) {
+          wrap.innerHTML = '<div style="background:#EFF8EF;border:1px solid #5A7A5A;border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px"><div><div style="font-size:15px;font-weight:500;color:#065F46;margin-bottom:2px">🔄 GitHub sync is active</div><div style="font-size:12px;color:#065F46">Orders and product changes sync automatically across all devices.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="syncAllToCloud()" style="background:#5A7A5A;color:#fff;border:none;padding:9px 18px;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:500;cursor:pointer">🔄 Push now</button><button onclick="resetToken()" style="background:transparent;color:#5A7A5A;border:1px solid #5A7A5A;padding:9px 14px;border-radius:6px;font-family:Jost,sans-serif;font-size:12px;cursor:pointer">Update Token</button></div></div>';
+        } else {
+          wrap.innerHTML = '<div style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:10px;padding:20px;margin-bottom:0"><div style="font-size:15px;font-weight:500;color:#92400E;margin-bottom:8px">⚠️ GitHub token required for cross-device sync</div><div style="font-size:13px;color:#92400E;margin-bottom:14px;line-height:1.7">Orders and product changes only save on this device without a token. Paste your GitHub token below to enable sync across all devices.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="tokenInput" type="password" placeholder="Paste GitHub token (ghp_...)" style="flex:1;border:1px solid #F59E0B;background:#fff;border-radius:6px;padding:10px 14px;font-family:Jost,sans-serif;font-size:13px;outline:none;min-width:200px"><button onclick="saveToken()" style="background:#92400E;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:500;cursor:pointer">Save Token</button></div></div>';
+        }
+      })();
+      </script>
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-val" id="kpiRevenue">GH₵0</div><div class="kpi-ch up">All orders</div></div>
         <div class="kpi"><div class="kpi-label">Orders</div><div class="kpi-val" id="kpiOrders">0</div><div class="kpi-ch up">Total placed</div></div>
@@ -890,7 +896,7 @@ const DASH_PASSWORD = 'Tina@68';
 // GitHub auto-sync — saves products.json directly to your repo
 const GITHUB_USER = 'Evanz-DataHub';
 const GITHUB_REPO = 'tinaselect.store';
-const GITHUB_TOKEN = ['ghp_Hfj6','I736xtMKq9H8','vAUJzVwBSIe1t13hzAW4'].join('');
+const GITHUB_TOKEN = localStorage.getItem('ts_gh_token') || '';
 const GITHUB_FILE   = 'products.json';
 const GITHUB_ORDERS = 'orders.json';
 const GITHUB_API    = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE;
@@ -1443,8 +1449,35 @@ function trackOrder() {
 
 function checkDashPass() {
   const pw=document.getElementById('dashPwInput').value;
-  if(pw===DASH_PASSWORD){ dashUnlocked=true; document.getElementById('dashPwInput').value=''; showPage('dashboard'); }
-  else showDashToast('Incorrect password');
+  if(pw===DASH_PASSWORD){
+    dashUnlocked=true;
+    document.getElementById('dashPwInput').value='';
+    showPage('dashboard');
+  } else {
+    showDashToast('Incorrect password');
+  }
+}
+
+function saveToken() {
+  const t = document.getElementById('tokenInput').value.trim();
+  if (!t.startsWith('ghp_')) { showDashToast('Invalid token — must start with ghp_'); return; }
+  localStorage.setItem('ts_gh_token', t);
+  showDashToast('✅ Token saved! Syncing orders now...');
+  // Re-render banner and trigger sync
+  const wrap = document.getElementById('syncBannerWrap');
+  if (wrap) wrap.innerHTML = '<div style="background:#EFF8EF;border:1px solid #5A7A5A;border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px"><div><div style="font-size:15px;font-weight:500;color:#065F46;margin-bottom:2px">🔄 GitHub sync is active</div><div style="font-size:12px;color:#065F46">Orders and product changes sync automatically across all devices.</div></div><div style="display:flex;gap:8px"><button onclick="syncAllToCloud()" style="background:#5A7A5A;color:#fff;border:none;padding:9px 18px;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:500;cursor:pointer">🔄 Push now</button><button onclick="resetToken()" style="background:transparent;color:#5A7A5A;border:1px solid #5A7A5A;padding:9px 14px;border-radius:6px;font-family:Jost,sans-serif;font-size:12px;cursor:pointer">Update Token</button></div></div>';
+  // Load orders from cloud with new token
+  loadOrdersFromCloud().then(() => {
+    renderOrderCards(document.getElementById('ordersBody'));
+    renderDashKPIs();
+  });
+}
+
+function resetToken() {
+  localStorage.removeItem('ts_gh_token');
+  showDashToast('Token cleared — please paste a new token');
+  renderDashKPIs();
+  showPage('dashboard');
 }
 
 function switchDash(tab,el) {
@@ -1515,7 +1548,7 @@ async function pushOrderToGitHub(newOrder) {
     let existing = [], sha = null;
     try {
       const r = await fetch(GITHUB_ORDERS_API, {
-        headers: {'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json'}
+        headers: {'Authorization':'token '+(localStorage.getItem('ts_gh_token')||''),'Accept':'application/vnd.github.v3+json'}
       });
       if (r.ok) {
         const d = await r.json();
@@ -1527,7 +1560,7 @@ async function pushOrderToGitHub(newOrder) {
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2))));
     await fetch(GITHUB_ORDERS_API, {
       method: 'PUT',
-      headers: {'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      headers: {'Authorization':'token '+(localStorage.getItem('ts_gh_token')||''),'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
       body: JSON.stringify({message:'New order '+newOrder.ref, content:encoded, ...(sha?{sha}:{})})
     });
   } catch(e) { console.warn('Order push failed:', e.message); }
@@ -1538,7 +1571,7 @@ async function cloudSaveOrder(order) {} // saveOrder already calls pushOrderToGi
 async function saveOrderStatus(ref, status) {
   try {
     const r = await fetch(GITHUB_ORDERS_API, {
-      headers: {'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json'}
+      headers: {'Authorization':'token '+(localStorage.getItem('ts_gh_token')||''),'Accept':'application/vnd.github.v3+json'}
     });
     if (!r.ok) return;
     const d = await r.json();
