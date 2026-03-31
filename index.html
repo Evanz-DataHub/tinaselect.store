@@ -710,7 +710,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
             <button onclick="saveToken()" style="background:#92400E;color:#fff;border:none;padding:11px 22px;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">Save Token</button>
           </div>
         </div>
-        <div id="tokenActiveBox" style="display:none;background:#EFF8EF;border:1px solid #5A7A5A;border-radius:10px;padding:16px 20px;display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div id="tokenActiveBox" style="display:none;background:#EFF8EF;border:1px solid #5A7A5A;border-radius:10px;padding:16px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
             <div style="font-size:15px;font-weight:500;color:#065F46;margin-bottom:2px">🔄 GitHub sync active</div>
             <div style="font-size:12px;color:#065F46">Orders and products sync across all your devices automatically.</div>
@@ -741,6 +741,8 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
       </div>
     </div>
     <div id="dash-orders" style="display:none">
+      <!-- Mini sync status for orders tab -->
+      <div id="ordersSyncNote" style="margin-bottom:16px;padding:12px 16px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;font-size:13px;color:#92400E;display:none">⚠️ Go to <strong>Overview</strong> tab to set up GitHub token for cross-device order sync.</div>
       <div class="dash-st">All Orders</div>
       <div class="orders-table"><div id="ordersBody"></div></div>
     </div>
@@ -1634,6 +1636,9 @@ function renderDashKPIs() {
 // ORDERS RENDERING
 // ═══════════════════════════════════════════════
 function renderOrders() {
+  // Show mini sync warning on orders tab if no token
+  const note = document.getElementById('ordersSyncNote');
+  if (note) note.style.display = localStorage.getItem('ts_gh_token') ? 'none' : 'block';
   loadOrders();
   const body = document.getElementById('ordersBody');
   renderOrderCards(body); // show local immediately
