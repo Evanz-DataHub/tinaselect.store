@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1E1A16">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -700,27 +703,20 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
   </div>
   <div class="dash-body">
     <div id="dash-overview">
-      <!-- GitHub Token Banner -->
-      <div id="syncBannerWrap" style="margin-bottom:24px">
-        <div id="tokenSetupBox" style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:10px;padding:20px">
-          <div style="font-size:15px;font-weight:500;color:#92400E;margin-bottom:6px">⚠️ GitHub token needed for cross-device sync</div>
-          <div style="font-size:13px;color:#92400E;margin-bottom:14px;line-height:1.7">Without a token, orders only save on this device. Paste your GitHub Personal Access Token below to sync orders and products across all devices.</div>
+      <!-- GitHub Sync Banner — always visible, adapts to token status -->
+      <div style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:10px;padding:20px;margin-bottom:24px">
+        <div style="font-size:14px;font-weight:600;color:#92400E;margin-bottom:6px">🔑 GitHub Sync Token</div>
+        <div id="tokenStatusMsg" style="font-size:12px;color:#92400E;margin-bottom:12px;line-height:1.6">Enter your GitHub token so orders and product changes sync across all your devices.</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <input id="tokenInput" type="text" placeholder="Paste GitHub token (ghp_...)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+            style="width:100%;border:1.5px solid #F59E0B;background:#fff;border-radius:6px;padding:12px 14px;font-family:Jost,sans-serif;font-size:13px;outline:none;color:#1E1A16">
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input id="tokenInput" type="password" placeholder="Paste GitHub token (ghp_...)" style="flex:1;min-width:200px;border:1px solid #F59E0B;background:#fff;border-radius:6px;padding:11px 14px;font-family:Jost,sans-serif;font-size:13px;outline:none">
-            <button onclick="saveToken()" style="background:#92400E;color:#fff;border:none;padding:11px 22px;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">Save Token</button>
-          </div>
-        </div>
-        <div id="tokenActiveBox" style="display:none;background:#EFF8EF;border:1px solid #5A7A5A;border-radius:10px;padding:16px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div>
-            <div style="font-size:15px;font-weight:500;color:#065F46;margin-bottom:2px">🔄 GitHub sync active</div>
-            <div style="font-size:12px;color:#065F46">Orders and products sync across all your devices automatically.</div>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button onclick="syncAllToCloud()" style="background:#5A7A5A;color:#fff;border:none;padding:9px 18px;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:500;cursor:pointer">🔄 Push now</button>
-            <button onclick="resetToken()" style="background:transparent;color:#5A7A5A;border:1px solid #5A7A5A;padding:9px 14px;border-radius:6px;font-family:Jost,sans-serif;font-size:12px;cursor:pointer">Update Token</button>
+            <button onclick="saveToken()" style="flex:1;background:#92400E;color:#fff;border:none;padding:12px 0;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:600;cursor:pointer">💾 Save Token</button>
+            <button onclick="syncAllToCloud()" style="flex:1;background:#5A7A5A;color:#fff;border:none;padding:12px 0;border-radius:6px;font-family:Jost,sans-serif;font-size:13px;font-weight:600;cursor:pointer">🔄 Push Now</button>
           </div>
         </div>
       </div>
+
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-val" id="kpiRevenue">GH₵0</div><div class="kpi-ch up">All orders</div></div>
         <div class="kpi"><div class="kpi-label">Orders</div><div class="kpi-val" id="kpiOrders">0</div><div class="kpi-ch up">Total placed</div></div>
@@ -1116,7 +1112,9 @@ function showPage(page) {
   document.getElementById('navCartBtn').style.display = isAdmin ? 'none' : 'flex';
   if (isAdmin) document.getElementById('toast').classList.remove('show');
   if (page === 'shop') renderProducts(filtered);
-  if (page === 'dashboard') { renderDashKPIs(); renderInventory(); renderOrders(); renderTopItems(); }
+  if (page === 'dashboard') {
+    verifyAndLoadDashboard();
+  }
 }
 
 document.getElementById('logoBtn').addEventListener('click', () => {
@@ -1469,13 +1467,23 @@ function checkDashPass() {
 }
 
 function saveToken() {
-  const t = document.getElementById('tokenInput').value.trim();
+  const input = document.getElementById('tokenInput');
+  if (!input) return;
+  // If showing masked saved token and user hasn't changed it, just sync
+  if (input.dataset.saved === '1' && input.value.includes('•')) {
+    showDashToast('Token already saved. Syncing now...');
+    loadOrdersFromCloud().then(() => {
+      renderOrderCards(document.getElementById('ordersBody'));
+      renderDashKPIs();
+    });
+    return;
+  }
+  const t = input.value.trim();
   if (!t.startsWith('ghp_')) { showDashToast('Invalid token — must start with ghp_'); return; }
   localStorage.setItem('ts_gh_token', t);
+  input.dataset.saved = '1';
   showDashToast('✅ Token saved! Syncing orders now...');
-  // Update banner display
   renderSyncBanner();
-  // Load orders from cloud with new token
   loadOrdersFromCloud().then(() => {
     renderOrderCards(document.getElementById('ordersBody'));
     renderDashKPIs();
@@ -1600,14 +1608,64 @@ async function saveOrderStatus(ref, status) {
 // DASHBOARD KPIs
 // ═══════════════════════════════════════════════
 function renderSyncBanner() {
-  const setup  = document.getElementById('tokenSetupBox');
-  const active = document.getElementById('tokenActiveBox');
-  if (!setup || !active) return;
+  const input = document.getElementById('tokenInput');
+  const msg   = document.getElementById('tokenStatusMsg');
   const token = localStorage.getItem('ts_gh_token');
-  setup.style.display  = token ? 'none'  : 'block';
-  active.style.display = token ? 'flex'  : 'none';
+  if (input && token) {
+    input.value = token.substring(0,8) + '••••••••••••••••••••••••';
+    input.dataset.saved = '1';
+  }
+  if (msg) {
+    if (token) {
+      msg.textContent = '✅ Token saved. Tap Push Now to sync to all devices.';
+      msg.style.color = '#065F46';
+    } else {
+      msg.textContent = '⚠️ No token. Orders only save on this device without it.';
+      msg.style.color = '#92400E';
+    }
+  }
 }
 
+function toggleTokenUpdate() {
+  const row = document.getElementById('tokenUpdateRow');
+  if (!row) return;
+  row.style.display = row.style.display === 'flex' ? 'none' : 'flex';
+  if (row.style.display === 'flex') {
+    document.getElementById('tokenInputUpdate').focus();
+  }
+}
+
+function saveTokenUpdate() {
+  const t = (document.getElementById('tokenInputUpdate').value || '').trim();
+  if (!t.startsWith('ghp_')) { showDashToast('Invalid token — must start with ghp_'); return; }
+  localStorage.setItem('ts_gh_token', t);
+  document.getElementById('tokenInputUpdate').value = '';
+  document.getElementById('tokenUpdateRow').style.display = 'none';
+  showDashToast('Token updated! Syncing now...');
+  renderSyncBanner();
+  loadOrdersFromCloud().then(() => renderOrderCards(document.getElementById('ordersBody')));
+}
+
+
+async function verifyAndLoadDashboard() {
+  const token = localStorage.getItem('ts_gh_token');
+  if (token) {
+    // Check if token still works — if not, clear it so yellow banner shows
+    try {
+      const r = await fetch(
+        'https://api.github.com/repos/Evanz-DataHub/tinaselect.store',
+        { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
+      );
+      if (r.status === 401 || r.status === 403) {
+        localStorage.removeItem('ts_gh_token');
+      }
+    } catch(e) {} // offline — keep token, don't clear
+  }
+  renderDashKPIs();
+  renderInventory();
+  renderOrders();
+  renderTopItems();
+}
 
 function renderDashKPIs() {
   renderSyncBanner();
