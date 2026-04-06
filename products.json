@@ -376,10 +376,10 @@
   },
   {
     "id": 20,
-    "name": "Spaghetti Strap Crop Top",
-    "cat": "crop",
-    "price": 58,
-    "emoji": "🩱",
+    "name": "Dress",
+    "cat": "dress",
+    "price": 110,
+    "emoji": "👗",
     "desc": "Delicate spaghetti strap crop top with an adjustable neckline. Light and breezy.",
     "specs": {
       "Type": "Crop Top",
