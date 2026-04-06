@@ -361,10 +361,10 @@
   },
   {
     "id": 19,
-    "name": "Printed Tube Crop",
-    "cat": "crop",
-    "price": 55,
-    "emoji": "🩱",
+    "name": "Dress",
+    "cat": "dress",
+    "price": 120,
+    "emoji": "👗",
     "desc": "Eye-catching printed tube top in fun patterns. Strapless, comfortable, and versatile.",
     "specs": {
       "Type": "Tube Crop",
