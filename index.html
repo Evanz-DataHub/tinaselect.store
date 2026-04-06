@@ -764,6 +764,17 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
         </div>
         <button class="btn-fill" style="margin-top:4px" onclick="addProduct()">+ Add Style</button>
       </div>
+      <div id="cloudinaryNotice" style="background:#EFF8EF;border:1px solid #5A7A5A;border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#065F46;display:none">
+        ✅ Cloudinary connected — videos will be streamed to customers worldwide.
+      </div>
+      <div id="cloudinarySetup" style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#92400E">
+        📹 <strong>Video sync not set up.</strong> Videos only show on your device. To let customers see your videos:<br><br>
+        1. Go to <a href="https://cloudinary.com" target="_blank" style="color:#92400E;font-weight:600">cloudinary.com</a> → sign up free<br>
+        2. From your dashboard copy your <strong>Cloud Name</strong><br>
+        3. Go to Settings → Upload → Add upload preset → set to <strong>Unsigned</strong> → save, copy the preset name<br>
+        4. Open the store HTML, find <code>REPLACE_CLOUD_NAME</code> and <code>REPLACE_UPLOAD_PRESET</code> and paste your values<br>
+        5. Upload the file to GitHub — videos will now sync to customers ✓
+      </div>
       <div class="dash-st">Your Inventory (<span id="invCount">20</span> styles)</div>
       <div class="inv-grid" id="invGrid"></div>
     </div>
@@ -1044,8 +1055,14 @@ async function loadFromCloud() {
     if (!Array.isArray(cloud) || !cloud.length) return false;
     cloud.forEach(p => {
       const local = products.find(lp => String(lp.id) === String(p.id));
+      // Photo: prefer cloud URL, fall back to local base64
       if (!p.photo && local && local.photo) p.photo = local.photo;
-      if (!p.video && local && local.video) p.video = local.video;
+      // Video: prefer cloud URL (streamable), fall back to local base64
+      if (p.video && p.video.startsWith('http')) {
+        // Cloud has a proper URL — use it (already correct)
+      } else if (!p.video && local && local.video) {
+        p.video = local.video; // use local base64 as fallback
+      }
       if (!p.emoji) p.emoji = EMOJIS[p.cat] || '👗';
       if (!p.specs) p.specs = {Delivery:'4–6 working days'};
     });
@@ -1063,8 +1080,23 @@ async function syncAllToCloud() {
     showSync('Saving...');
     const slim = await Promise.all(products.map(async p => {
       let photo = p.photo || null;
+      let video = p.video || null;
       if (photo && photo.startsWith('data:')) photo = await compressImg(photo, 500, 0.6);
-      return {id:p.id,name:p.name,cat:p.cat,price:p.price,emoji:p.emoji,desc:p.desc||'',specs:p.specs||{},inStock:p.inStock!==false,photo,video:null};
+      // Upload video to Cloudinary so customers can stream it
+      if (video && video.startsWith('data:') && isCloudinaryReady()) {
+        const cloudUrl = await uploadVideoToCloudinary(video);
+        if (cloudUrl) {
+          video = cloudUrl;
+          // Save the URL back to the local product so next sync uses URL not base64
+          const localP = products.find(lp => lp.id === p.id);
+          if (localP) localP.video = cloudUrl;
+        } else {
+          video = null; // upload failed — don't sync broken data
+        }
+      } else if (video && video.startsWith('data:')) {
+        video = null; // Cloudinary not set up — skip video sync
+      }
+      return {id:p.id,name:p.name,cat:p.cat,price:p.price,emoji:p.emoji,desc:p.desc||'',specs:p.specs||{},inStock:p.inStock!==false,photo,video};
     }));
     let sha = null;
     try {
@@ -1088,6 +1120,42 @@ async function cloudDeleteProduct(id) { await syncAllToCloud(); }
 // ═══════════════════════════════════════════════
 // IMAGE COMPRESSION
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// CLOUDINARY VIDEO UPLOAD
+// Upload video to Cloudinary and return a public URL
+// Cloudinary free tier: 25GB storage, 25GB bandwidth/month
+// ═══════════════════════════════════════════════
+const CLOUDINARY_CLOUD = 'dcv884q8q';   // e.g. 'dxyz123abc'
+const CLOUDINARY_PRESET = 'Tinaselect'; // e.g. 'tinaselect'
+
+async function uploadVideoToCloudinary(base64Video) {
+  try {
+    // Convert base64 to blob
+    const res = await fetch(base64Video);
+    const blob = await res.blob();
+    const formData = new FormData();
+    formData.append('file', blob);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+    formData.append('folder', 'tinaselect');
+    showSync('Uploading video...');
+    const r = await fetch(
+      'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/video/upload',
+      { method: 'POST', body: formData }
+    );
+    if (!r.ok) { console.warn('Cloudinary upload failed:', r.status); return null; }
+    const data = await r.json();
+    showSync('✓ Video uploaded');
+    return data.secure_url; // e.g. https://res.cloudinary.com/...
+  } catch(e) {
+    console.warn('Video upload error:', e.message);
+    return null;
+  }
+}
+
+function isCloudinaryReady() {
+  return CLOUDINARY_CLOUD !== 'REPLACE_CLOUD_NAME' && CLOUDINARY_PRESET !== 'REPLACE_UPLOAD_PRESET';
+}
+
 function compressImg(b64, maxW, quality) {
   return new Promise(resolve => {
     const img = new Image();
@@ -1795,6 +1863,13 @@ function renderTopItems() {
 }
 
 function renderInventory() {
+  // Show Cloudinary setup status
+  const notice = document.getElementById('cloudinaryNotice');
+  const setup  = document.getElementById('cloudinarySetup');
+  if (notice && setup) {
+    if (isCloudinaryReady()) { notice.style.display='block'; setup.style.display='none'; }
+    else { notice.style.display='none'; setup.style.display='block'; }
+  }
   document.getElementById('invCount').textContent=products.length;
   document.getElementById('invGrid').innerHTML=products.map(p => {
     const bg=BGS[p.cat]||BGS.top;
