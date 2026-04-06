@@ -316,10 +316,10 @@
   },
   {
     "id": 16,
-    "name": "Strapless Tube Top",
-    "cat": "top",
-    "price": 50,
-    "emoji": "👚",
+    "name": "Dress",
+    "cat": "dress",
+    "price": 110,
+    "emoji": "👗",
     "desc": "Sleek strapless tube top. Boned interior for a secure fit.",
     "specs": {
       "Type": "Tube Top",
