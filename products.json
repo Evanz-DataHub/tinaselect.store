@@ -286,10 +286,10 @@
   },
   {
     "id": 14,
-    "name": "Cow Print Top",
-    "cat": "top",
-    "price": 70,
-    "emoji": "👚",
+    "name": "Dress",
+    "cat": "dress",
+    "price": 120,
+    "emoji": "👗",
     "desc": "Fun and fashionable cow print top — a bold statement piece.",
     "specs": {
       "Type": "Cow Print Top",
