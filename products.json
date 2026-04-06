@@ -121,9 +121,9 @@
   },
   {
     "id": 3,
-    "name": "Dress",
+    "name": "Two piece",
     "cat": "twopiece",
-    "price": 95,
+    "price": 100,
     "emoji": "✨",
     "desc": "Stunning floor-length handmade maxi dress in lightweight chiffon. Adjustable tie waist.",
     "specs": {
