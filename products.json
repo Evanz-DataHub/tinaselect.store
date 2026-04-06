@@ -136,9 +136,9 @@
   },
   {
     "id": 4,
-    "name": "Dress",
+    "name": "Two Piece",
     "cat": "twopiece",
-    "price": 1,
+    "price": 120,
     "emoji": "✨",
     "desc": "Romantic off-shoulder maxi dress with ruffled hem. Ideal for weddings, baby showers, and events.",
     "specs": {
