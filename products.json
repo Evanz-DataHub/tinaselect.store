@@ -346,10 +346,10 @@
   },
   {
     "id": 18,
-    "name": "Ruched Crop Top",
-    "cat": "crop",
-    "price": 60,
-    "emoji": "🩱",
+    "name": "Dress",
+    "cat": "dress",
+    "price": 75,
+    "emoji": "👗",
     "desc": "Trendy ruched crop top with a figure-flattering design. Stretchy fabric for comfort.",
     "specs": {
       "Type": "Crop Top",
