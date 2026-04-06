@@ -241,10 +241,10 @@
   },
   {
     "id": 12,
-    "name": "Classic Basic Top",
-    "cat": "top",
-    "price": 40,
-    "emoji": "👚",
+    "name": "Maya Dress",
+    "cat": "dress",
+    "price": 110,
+    "emoji": "👗",
     "desc": "Clean, simple, and perfectly made basic top. Available in a wide range of colours.",
     "specs": {
       "Type": "Basic Top",
