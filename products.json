@@ -331,10 +331,10 @@
   },
   {
     "id": 17,
-    "name": "Ankara Crop Top",
-    "cat": "crop",
-    "price": 65,
-    "emoji": "🩱",
+    "name": "Dress",
+    "cat": "dress",
+    "price": 70,
+    "emoji": "👗",
     "desc": "Vibrant Ankara crop top with a short hem. Pair with palazzo trousers, jeans, or skirts.",
     "specs": {
       "Type": "Crop Top",
