@@ -55,7 +55,7 @@
       "Type": "Handmade Dress",
       "Delivery": "4–6 working days"
     },
-    "inStock": true,
+    "inStock": false,
     "photo": null,
     "video": "https://res.cloudinary.com/dcv884q8q/video/upload/v1775777848/tinaselect/vq6lmmmtiaer3pthah48.mp4"
   },
