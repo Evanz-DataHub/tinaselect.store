@@ -1,5 +1,20 @@
 [
   {
+    "id": 1775778284209,
+    "name": "Palazzo",
+    "cat": "palazzo",
+    "price": 80,
+    "emoji": "👘",
+    "desc": "",
+    "specs": {
+      "Type": "Palazzo Trousers",
+      "Delivery": "4–6 working days"
+    },
+    "inStock": true,
+    "photo": null,
+    "video": "https://res.cloudinary.com/dcv884q8q/video/upload/v1775778288/tinaselect/s6wrrojuasamqdudytnh.mp4"
+  },
+  {
     "id": 1775778131667,
     "name": "Cow Neck Top",
     "cat": "top",
