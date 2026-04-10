@@ -1179,6 +1179,9 @@ function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   window.scrollTo(0,0);
+  // Save page to URL hash so refresh restores same page
+  const safeHash = (page === 'dashboard' || page === 'dash-login') ? 'shop' : page;
+  history.replaceState(null, '', '#' + safeHash);
   const isAdmin = (page === 'dashboard' || page === 'dash-login');
   document.getElementById('waFloat').style.display = isAdmin ? 'none' : 'flex';
   document.getElementById('navCartBtn').style.display = isAdmin ? 'none' : 'flex';
@@ -2034,6 +2037,13 @@ function showSync(msg) {
   loadLocal();
   filtered=[...products];
   renderProducts(filtered);
+
+  // Step 3: Restore last page from URL hash on refresh
+  const hash = window.location.hash.replace('#','');
+  const validPages = ['shop','detail','story','track'];
+  if (hash && validPages.includes(hash)) {
+    showPage(hash);
+  }
 
   // Step 2: Fetch latest from cloud so customers see admin's changes
   loadFromCloud().then(loaded => {
