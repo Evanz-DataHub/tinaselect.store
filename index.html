@@ -917,7 +917,8 @@ const GITHUB_TOKEN = localStorage.getItem('ts_gh_token') || ''; // admin token (
 // ORDER_TOKEN: embedded so customer orders always reach the dashboard
 // Split to avoid GitHub secret scanning — DO NOT combine into one string
 const _ot = ['ghp_UDtj','za88FXH3cX','6ryPrtqB3Z','Es0npZ28DEx9'];
-const ORDER_TOKEN = _ot.join('');
+const ORDER_TOKEN = _ot.join(''); // kept as fallback only
+const BACKEND_URL = 'https://tinaselect-backend.onrender.com'; // Render backend — token lives here, not in HTML
 const GITHUB_FILE   = 'products.json';
 const GITHUB_ORDERS = 'orders.json';
 const GITHUB_API    = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE;
@@ -1622,12 +1623,27 @@ function loadOrders() {
 }
 
 async function loadOrdersFromCloud() {
+  // Try backend first
+  try {
+    const res = await fetch(BACKEND_URL + '/orders');
+    if (res.ok) {
+      const cloud = await res.json();
+      if (!Array.isArray(cloud) || !cloud.length) return;
+      const localRefs = new Set(allOrders.map(o => o.ref));
+      cloud.forEach(o => { if (!localRefs.has(o.ref)) allOrders.push(o); });
+      allOrders.sort((a, b) => new Date(b.timestamp||0) - new Date(a.timestamp||0));
+      try { localStorage.setItem('ts_orders', JSON.stringify(allOrders)); } catch(e) {}
+      return;
+    }
+  } catch(e) {
+    console.warn('Backend load failed, trying GitHub directly:', e.message);
+  }
+  // Fallback: direct GitHub fetch
   try {
     const res = await fetch(ORDERS_URL + '?t=' + Date.now());
     if (!res.ok) return;
     const cloud = await res.json();
     if (!Array.isArray(cloud) || !cloud.length) return;
-    // Merge: add any cloud orders missing locally
     const localRefs = new Set(allOrders.map(o => o.ref));
     cloud.forEach(o => { if (!localRefs.has(o.ref)) allOrders.push(o); });
     allOrders.sort((a, b) => new Date(b.timestamp||0) - new Date(a.timestamp||0));
@@ -1636,6 +1652,21 @@ async function loadOrdersFromCloud() {
 }
 
 async function pushOrderToGitHub(newOrder) {
+  // Try backend first (token lives on server — safe)
+  try {
+    const res = await fetch(BACKEND_URL + '/orders', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(newOrder)
+    });
+    if (res.ok) {
+      console.log('Order saved via backend ✓');
+      return;
+    }
+  } catch(e) {
+    console.warn('Backend unavailable, falling back to direct push:', e.message);
+  }
+  // Fallback: direct GitHub push using embedded token
   try {
     let existing = [], sha = null;
     try {
@@ -1655,15 +1686,25 @@ async function pushOrderToGitHub(newOrder) {
       headers: {'Authorization':'token '+ORDER_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
       body: JSON.stringify({message:'New order '+newOrder.ref, content:encoded, ...(sha?{sha}:{})})
     });
-  } catch(e) { console.warn('Order push failed:', e.message); }
+  } catch(e) { console.warn('Fallback push also failed:', e.message); }
 }
 
 async function cloudSaveOrder(order) {} // saveOrder already calls pushOrderToGitHub
 
 async function saveOrderStatus(ref, status) {
+  // Try backend first
+  try {
+    const res = await fetch(BACKEND_URL + '/orders/' + encodeURIComponent(ref), {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({status})
+    });
+    if (res.ok) return;
+  } catch(e) {}
+  // Fallback: direct GitHub
   try {
     const r = await fetch(GITHUB_ORDERS_API, {
-      headers: {'Authorization':'token '+(localStorage.getItem('ts_gh_token')||''),'Accept':'application/vnd.github.v3+json'}
+      headers: {'Authorization':'token '+ORDER_TOKEN,'Accept':'application/vnd.github.v3+json'}
     });
     if (!r.ok) return;
     const d = await r.json();
@@ -1673,7 +1714,7 @@ async function saveOrderStatus(ref, status) {
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
     await fetch(GITHUB_ORDERS_API, {
       method:'PUT',
-      headers:{'Authorization':'token '+GITHUB_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      headers:{'Authorization':'token '+ORDER_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
       body:JSON.stringify({message:'Status '+ref+' → '+status, content:encoded, sha:d.sha})
     });
   } catch(e) { console.warn('Status save failed:', e.message); }
