@@ -15,21 +15,6 @@
     "video": null
   },
   {
-    "id": 1776473988468,
-    "name": "Dress",
-    "cat": "newdeal",
-    "price": 75,
-    "emoji": "🔥",
-    "desc": "",
-    "specs": {
-      "Type": "New Deal",
-      "Delivery": "4–6 working days"
-    },
-    "inStock": true,
-    "photo": null,
-    "video": null
-  },
-  {
     "id": 1776473898566,
     "name": "Maxi Dress",
     "cat": "newdeal",
