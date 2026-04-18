@@ -379,6 +379,13 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 .wa-float{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(37,211,102,.4);z-index:150;transition:transform .2s;}
 .wa-float:hover{transform:scale(1.1);}
 #syncBadge{position:fixed;top:76px;right:16px;background:#34D399;color:#fff;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:500;z-index:997;opacity:0;transition:opacity .3s;pointer-events:none;}
+/* Lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:600;display:none;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
+.lightbox.open{display:flex;}
+.lightbox-media{max-width:95vw;max-height:85vh;border-radius:8px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.6);}
+.lightbox-close{position:absolute;top:20px;right:24px;font-size:32px;color:#fff;cursor:pointer;line-height:1;background:none;border:none;opacity:.8;}
+.lightbox-close:hover{opacity:1;}
+.lightbox-caption{color:rgba(255,255,255,.7);font-size:14px;margin-top:14px;font-family:'Jost',sans-serif;}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--charcoal);color:var(--ivory);padding:12px 24px;border-radius:4px;font-size:14px;z-index:999;transition:transform .3s;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 /* PWA Install Banner */
@@ -545,6 +552,8 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
       <div class="cat-chip" onclick="filterCat('twopiece',this)">✨ Two Pieces</div>
       <div class="cat-chip" onclick="filterCat('top',this)">👚 Tops</div>
       <div class="cat-chip" onclick="filterCat('crop',this)">🩱 Crop Tops</div>
+      <div class="cat-chip" onclick="filterCat('skirt',this)">👘 Skirts</div>
+      <div class="cat-chip" onclick="filterCat('newdeal',this)">🔥 New Deals</div>
     </div>
   </section>
   <section class="products-section" id="products">
@@ -752,6 +761,7 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
             <select class="fsel" id="nCat">
               <option value="dress">👗 Handmade Dress</option><option value="palazzo">👘 Palazzo</option>
               <option value="twopiece">✨ Two Piece</option><option value="top">👚 Top</option><option value="crop">🩱 Crop Top</option>
+              <option value="skirt">👘 Skirt</option><option value="newdeal">🔥 New Deal</option>
             </select>
           </div>
         </div>
@@ -878,6 +888,14 @@ footer{background:var(--charcoal);color:var(--muted);padding:44px 5% 24px;}
 
 <div class="toast" id="toast"></div>
 
+<!-- Lightbox for full image view -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightboxImg" class="lightbox-media" src="" alt="" style="display:none" onclick="event.stopPropagation()">
+  <video id="lightboxVideo" class="lightbox-media" controls style="display:none" onclick="event.stopPropagation()"></video>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
 <!-- PWA Install Banner (Android/Chrome) -->
 <div class="pwa-banner" id="pwaBanner">
   <div class="pwa-banner-icon">👗</div>
@@ -927,9 +945,9 @@ const PRODUCTS_URL  = 'https://' + GITHUB_USER + '.github.io/' + GITHUB_REPO + '
 const ORDERS_URL    = 'https://' + GITHUB_USER + '.github.io/' + GITHUB_REPO + '/orders.json';
 const PROMOS = { TINA10:10, TINA20:20, NEWCUST:15 };
 const SIZES = [6,8,10,12,14,16,18,20];
-const BGS = { dress:'linear-gradient(160deg,#F9EDE8,#F0D5CC)', palazzo:'linear-gradient(160deg,#EDE8F9,#D5CCF0)', twopiece:'linear-gradient(160deg,#E8F9ED,#CCF0D9)', top:'linear-gradient(160deg,#F5EFE6,#E8DDD4)', crop:'linear-gradient(160deg,#FFF0E8,#F0D4C4)' };
-const EMOJIS = { dress:'👗', palazzo:'👘', twopiece:'✨', top:'👚', crop:'🩱' };
-const LABELS = { dress:'Handmade Dress', palazzo:'Palazzo Trousers', twopiece:'Two Piece Combo', top:'Top', crop:'Crop Top' };
+const BGS = { dress:'linear-gradient(160deg,#F9EDE8,#F0D5CC)', palazzo:'linear-gradient(160deg,#EDE8F9,#D5CCF0)', twopiece:'linear-gradient(160deg,#E8F9ED,#CCF0D9)', top:'linear-gradient(160deg,#F5EFE6,#E8DDD4)', crop:'linear-gradient(160deg,#FFF0E8,#F0D4C4)', skirt:'linear-gradient(160deg,#E8F0F9,#CCD5F0)', newdeal:'linear-gradient(160deg,#F9F5E8,#F0E8CC)' };
+const EMOJIS = { dress:'👗', palazzo:'👘', twopiece:'✨', top:'👚', crop:'🩱', skirt:'👘', newdeal:'🔥' };
+const LABELS = { dress:'Handmade Dress', palazzo:'Palazzo Trousers', twopiece:'Two Piece Combo', top:'Top', crop:'Crop Top', skirt:'Skirt', newdeal:'New Deal' };
 const COLOURS = [
   // Neutrals
   {n:'White',h:'#FFFFFF'},{n:'Off White',h:'#FAF9F6'},{n:'Ivory',h:'#FFFFF0'},{n:'Cream',h:'#FFFDD0'},
@@ -1272,8 +1290,17 @@ function openDetail(id) {
   const main = document.getElementById('dImgMain');
   main.style.background = BGS[p.cat]||BGS.top;
   main.innerHTML = p.emoji;
-  if (p.video) { const v=document.createElement('video'); v.className='dimain-media'; v.src=p.video; v.autoplay=true; v.muted=true; v.loop=true; v.playsInline=true; main.appendChild(v); }
-  else if (p.photo) { const i=document.createElement('img'); i.className='dimain-media'; i.src=p.photo; i.alt=p.name; main.appendChild(i); }
+  main.style.cursor = (p.photo || p.video) ? 'zoom-in' : 'default';
+  main.title = (p.photo || p.video) ? 'Click to view full image' : '';
+  if (p.video) {
+    const v=document.createElement('video'); v.className='dimain-media'; v.src=p.video; v.autoplay=true; v.muted=true; v.loop=true; v.playsInline=true;
+    main.appendChild(v);
+    main.onclick = () => openLightbox(p.video, p.name, true);
+  } else if (p.photo) {
+    const i=document.createElement('img'); i.className='dimain-media'; i.src=p.photo; i.alt=p.name;
+    main.appendChild(i);
+    main.onclick = () => openLightbox(p.photo, p.name, false);
+  } else { main.onclick = null; }
   document.getElementById('dThumbs').innerHTML = ['main','📦','🏷️'].map((e,i) => {
     const bg=BGS[p.cat]||BGS.top;
     if (i===0) {
@@ -1581,6 +1608,32 @@ function switchDash(tab,el) {
   if(tab==='orders') renderOrders();
   if(tab==='inventory') renderInventory();
 }
+
+function openLightbox(src, caption, isVideo) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  const vid = document.getElementById('lightboxVideo');
+  const cap = document.getElementById('lightboxCaption');
+  if (isVideo) {
+    vid.src = src; vid.style.display = 'block';
+    img.style.display = 'none';
+  } else {
+    img.src = src; img.style.display = 'block';
+    vid.style.display = 'none'; vid.src = '';
+  }
+  cap.textContent = caption || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightboxVideo').src = '';
+  document.body.style.overflow = '';
+}
+
+// Close lightbox on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
 function openWA(msg){ window.open('https://wa.me/'+PHONE+'?text='+encodeURIComponent(msg),'_blank'); }
 
